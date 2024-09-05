@@ -51,7 +51,6 @@ def register(request):
             password=hashed_password,
             firstname=data.get('firstname'),
             lastname=data.get('lastname'),
-            
         )
         user.save()
         otp_value = generate_otp()

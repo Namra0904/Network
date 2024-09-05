@@ -22,7 +22,6 @@ function Register(){
 
   
   const onSubmit = async (data) => {
-    console.log(data)
     try {
       const response = await axios({
         method: 'POST',

@@ -163,17 +163,20 @@ def allPost(request):
                         "text": comment.comment_content,
                     })
                 liked_by_current_user = request.user in post.likers.all()
+                saved_by_current_user = request.user in post.savers.all()
                 post_data = {
                     "profileImage": post.creater.image.url if post.creater.image else "",
                     "username": post.creater.username,
-                    "date": post.date_created.strftime('%Y-%m-%d'),
+                    "date": post.date_created.strftime('%d-%m-%Y'),
                     "content": post.content_text,
                     "image": post.content_image.url if post.content_image else "",
                     "likes": post.likers.count(),
                     "postId":post.id,
                     "userId":post.creater.id,
                     "comments": comments_data,
-                    "liked_by_current_user":liked_by_current_user
+                    "userName":post.creater.firstname+" "+post.creater.lastname,
+                    "liked_by_current_user":liked_by_current_user,
+                    "saved_by_current_user":saved_by_current_user
                 }
                 response_data.append(post_data)
             

@@ -3,11 +3,14 @@ from .models import Comment
 from Post.models import Post
 from django.http import JsonResponse
 from django.db import IntegrityError
+import json
 
 def comment(request, id):
     if request.user is not None:
         if request.method == 'POST':
-            comment_text = request.POST.get('comment_text')
+            data = json.loads(request.body)
+            comment_text = data.get('comment_text')
+            print(comment_text)
             if not comment_text:
                 return JsonResponse({'error': 'Comment text is required.'}, status=400)
 

@@ -7,10 +7,9 @@ class User(models.Model):
     username = models.CharField(max_length=255)
     email = models.EmailField(unique=True, blank=True)
     password = models.CharField(max_length=255)  # Corrected this line
-    password_confirmation = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='profile_images', blank=True, null=True)
+    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)

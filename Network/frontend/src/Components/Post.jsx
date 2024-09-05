@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Bookmark, SendHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, SendHorizontal} from 'lucide-react';
 import axios from 'axios';
+import img from "../assets/Images/pic_image.png";
+
+
 
 const Post = () => {
   const [posts, setPosts] = useState([]);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
-  const [userID, setId] = useState(() => localStorage.getItem('userId') || '');
+  const [commentInputs, setCommentInputs] = useState({}); 
 
   const handleLike = async (postId, index) => {
     const updatedPosts = [...posts];
@@ -49,6 +52,34 @@ const Post = () => {
     }
   };
 
+  const handleCommentChange = (e, postId) => {
+    setCommentInputs({ ...commentInputs, [postId]: e.target.value });
+  };
+
+  const handleCommentSubmit = async (postId, index) => {
+    const commentText = commentInputs[postId];
+
+    if (!commentText) {
+      return;
+    }
+    const updatedPosts = [...posts];
+    try {
+      await axios.post(`http://127.0.0.1:8000/user/post/${postId}/write_comment`, {
+        comment_text: commentText,
+      }, {
+        headers: { Authorization: authToken }
+      });
+      updatedPosts[index].comments.push({
+        // username: 'You',
+        text: commentText,
+      });
+      setPosts(updatedPosts);
+      setCommentInputs({ ...commentInputs, [postId]: '' });
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -57,7 +88,8 @@ const Post = () => {
         });
         const postsWithLikedState = response.data.map(post => ({
           ...post,
-          liked: post.liked_by_current_user, 
+          liked: post.liked_by_current_user,
+          saved: post.saved_by_current_user,
         }));
         setPosts(postsWithLikedState);
       } catch (error) {
@@ -84,14 +116,12 @@ const Post = () => {
         overflowY: 'auto',
         padding: '10px',
         borderRadius: '8px',
-        // Hiding scrollbar while keeping the content scrollable
-        scrollbarWidth: 'none', // For Firefox
-        msOverflowStyle: 'none', // For IE and Edge
+        scrollbarWidth: 'none', 
+        msOverflowStyle: 'none',
       }}
     >
       <style>
         {`
-          /* For WebKit-based browsers like Chrome, Safari, and newer Edge */
           div::-webkit-scrollbar {
             display: none;
           }
@@ -111,10 +141,22 @@ const Post = () => {
           <div className="card-body p-2">
             {/* Header Section */}
             <div className="d-flex align-items-center mb-2">
+                      <div>
+                <img
+                  src={post.profileImage ? post.profileImage : img}
+                  alt="profile"
+                  style={{
+                    width: '53px',
+                    height: '45px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
               <div>
-                <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{post.username}</h6>
+                <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem'}}>{post.userName}</h6>
                 <p className="mb-0 text-muted" style={{ fontSize: '0.7rem' }}>
-                  @{post.username} · {post.date}
+                  @{post.username} · {post.time} {post.date}
                 </p>
               </div>
             </div>
@@ -142,11 +184,11 @@ const Post = () => {
                     onClick={() => handleLike(post.postId, index)}
                     fill={post.liked ? 'red' : 'white'}
                   />
-                  <span style={{ fontSize: '0.8rem' }}>{post.likes}</span>
+                  {post.likes > 0 && <span style={{ fontSize: '0.8rem' }}>{post.likes}</span>}
                 </div>
                 <div className="d-flex align-items-center" onClick={() => toggleComments(index)} style={{ cursor: 'pointer' }}>
                   <MessageCircle className="ms-1" style={{ cursor: 'pointer' }} />
-                  <span style={{ fontSize: '0.8rem' }}>{post.comments.length}</span>
+                  {post.comments.length > 0 && <span style={{ fontSize: '0.8rem' }}>{post.comments.length}</span>}
                 </div>
               </div>
               <div>
@@ -162,41 +204,82 @@ const Post = () => {
               {post.content}  
             </p>
 
-            {post.showComments && (
-              <div className="mt-2">
-                <div>
-                <input
-        type="text"
-        className="form-control"
-        placeholder="Write a comment..."
-        style={{
-          fontSize: '0.8rem',
-          padding: '0.35rem',
-          paddingRight: '2.5rem', // Adjust padding to make space for the icon
-          borderRadius: '15px',
-          borderColor: '#dbdbdb',
-        }}
-      />
-        <SendHorizontal
-        style={{
-          position: 'absolute',
-          right: '20px',
-          cursor: 'pointer',
-          color: '#888',
-          marginTop:'-25px'
-        }}
-        size={20}
-        onClick={() => console.log('Send comment')}
-      />
-                </div>
-                {post.comments.map((comment, idx) => (
-                  <div key={idx} className="mt-2 d-flex align-items-center">
-                    <strong style={{ fontSize: '0.8rem' }}>{comment.username}</strong>
-                    <p className="mb-1" style={{ fontSize: '0.8rem', marginLeft: '8px' }}>{comment.text}</p>
-                  </div>
-                ))}
-              </div>
+      {post.showComments && (
+        <div className="mt-2">
+          <div className="text-center" style={{ fontSize: '0.95rem', marginBottom: '10px' }}>
+            {post.comments.length === 0 ? (
+              <b>No comments</b>
+            ) : (
+              <b>Comments</b>
             )}
+          </div>
+
+{post.comments.length > 0 &&
+            post.comments.map((comment, idx) => (
+              <div key={idx}>
+                {/* Profile Image */}
+                <div className="mt-2 d-flex align-items-center">
+                  <img
+                    src={comment.profileImage ? comment.profileImage : img}
+                    alt="profile"
+                    style={{
+                      width: '53px',
+                      height: '45px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
+                </div>
+              
+                <div className="ms-5">
+                  <p
+                    className="mb-0"
+                    style={{
+                      backgroundColor: '#F1F1F1',
+                      padding: '8px 12px',
+                      borderRadius: '12px',
+                      fontSize: '0.85rem',
+                      marginTop: '-10px',
+                    }}
+                  >
+                    {comment.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+          {/* Comment input field */}
+          <div>
+            <input
+              type="text"
+              className="form-control mt-3"
+              placeholder="Write a comment..."
+              value={commentInputs[post.postId] || ''} // Bind the input value to the comment state
+              onChange={(e) => handleCommentChange(e, post.postId)}
+              style={{
+                fontSize: '0.8rem',
+                padding: '0.35rem',
+                paddingRight: '2.5rem', // Adjust padding to make space for the icon
+                borderRadius: '15px',
+                borderColor: '#dbdbdb',
+              }}
+            />
+            <SendHorizontal
+              style={{
+                position: 'absolute',
+                right: '20px',
+                cursor: 'pointer',
+                color: '#888',
+                marginTop: '-25px',
+              }}
+              size={20}
+              onClick={() => handleCommentSubmit(post.postId, index)}
+            />
+          </div>
+
+                    </div>
+                  )}
           </div>
         </div>
       ))}
