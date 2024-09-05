@@ -23,6 +23,7 @@ const Post = () => {
         updatedPosts[index].liked = false;
         updatedPosts[index].likes -= 1;
       }
+      console.log(authToken)
       setPosts(updatedPosts);
     } catch (error) {
       console.error('Error liking/unliking post:', error);
