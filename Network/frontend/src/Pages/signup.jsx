@@ -57,7 +57,7 @@ function Register(){
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-4 bg-white rounded shadow-sm"
-        style={{ maxWidth: '400px', width: '100%' }}
+        style={{ maxWidth: '400px', width: '100%',}}
       >
         <div className="d-flex justify-content-center">
           <img src={img} height="45em" style={{ marginBottom: '2vh' }} alt="Logo" />
@@ -169,10 +169,10 @@ function Register(){
           </div>
         )}
 
-        <button type="submit" className="btn btn-success w-100 mt-3">Sign Up</button>
+        <button type="submit" className="btn btn-success w-100 mt-3"><b>Sign Up</b></button>
 
         <p className="text-center mt-3">
-          Already have an account? <Link to="/login" className="text-decoration-none">Log in</Link>
+          Already have an account? <Link to="/login" className="link-hover">Log in</Link>
         </p>
       </form>
     </div>

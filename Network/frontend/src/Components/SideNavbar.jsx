@@ -6,7 +6,7 @@ import {
   FaBookmark
 } from 'react-icons/fa';
 import Main from './Main';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation  } from 'react-router-dom';
 import BottomBar from './BottomBar';
 import CreatePostModal from './CreatePost';
 import img from '../assets/Images/logo_icon.png';
@@ -18,6 +18,12 @@ const Sidebar = () => {
   
     const [showModal, setShowModal] = useState(false);
     const location = useLocation();
+
+    const handleLogout = () =>{
+      // localStorage.removeItem('authToken');
+      // localStorage.removeItem('userId')
+     
+    }
 
     const handleShowModal = () => {
       setShowModal(true);
@@ -79,9 +85,9 @@ const Sidebar = () => {
       </li>
       <li className="nav-item mt-auto ms-4 mb-3">
         <Link
-          to="/home/logout"
+          to="/login"
           className={`nav-link text-dark d-flex align-items-center ${location.pathname === '/home/logout' ? 'active' : ''}`}
-        >
+        onClick={handleLogout}>
           <FaSignOutAlt className="me-2" size={22} />
           <span className="ms-1" style={{ fontSize: '17px' }}><b>Logout</b></span>
         </Link>

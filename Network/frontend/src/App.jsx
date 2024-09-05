@@ -10,7 +10,7 @@ import Chats from './Components/chats';
 import Search from './Components/Search';
 import Profile from './Components/Profile';
 import Saved from './Components/Saved';
-// import CreatePostModal from './Components/CreatePost';
+import ResetMail from './Pages/ResetMail';
 function App(){
   return (
     <>
@@ -21,6 +21,7 @@ function App(){
     <Route path="/login" element={<LoginPage />} />
     <Route path="/signup" element={<Register />} />
     <Route path="/verify" element={<OTPVerification />} />
+    <Route path="/reset-mail" element={<ResetMail />} />
     <Route path="/home" element={<Layout />}>   
            {/* <Route index element={<Post />} /> */}
             <Route path="post" element={<Post />} />

@@ -55,3 +55,8 @@ export const SignUpSchema = z
       .length(6, { message: "OTP must be exactly 6 digits." })
       .regex(/^\d+$/, { message: "OTP must be a numeric value." }),
   });
+
+
+  export const ResetMailSchema = z.object({
+    email: z.string().email({ message: "Invalid email address." }),
+  })

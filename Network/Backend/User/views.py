@@ -232,7 +232,9 @@ def generate_jwt_token(user):
 
 def reset_send_mail(request):
     if request.method == "POST":
-        email = request.POST.get('email')
+        data = json.loads(request.body)
+        email = data.get('email')
+        print(email)
         user = User.objects.filter(email=email).first()
 
         if user:
@@ -244,7 +246,7 @@ def reset_send_mail(request):
             from_email = settings.EMAIL_HOST_USER
 
             send_mail(subject, message, from_email, [email])
-
+            
             return JsonResponse({"success": "Password reset link sent!"}, status=200)
         else:
             return JsonResponse({"error": "Email does not exist!"}, status=404)

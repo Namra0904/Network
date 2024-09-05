@@ -22,7 +22,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
     const onSubmit = async (data) => {
-        console.log(data)
         try {
             const response = await axios({
                 method: 'POST',
@@ -38,6 +37,7 @@ const LoginPage = () => {
             if (response.status === 200) {
                 localStorage.setItem('authToken', response.data.token);
                 console.log('Login successful:', response.data);
+                navigate('/home/post')
             }
         } catch (error) {
             if(error.response.data.error === 'Unverified'){
@@ -54,7 +54,7 @@ const LoginPage = () => {
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-            <div className="bg-white rounded p-4 shadow-sm bg-light" style={{ maxWidth: '400px', width: '100%' }}>
+            <div className="bg-white rounded p-4 shadow-sm bg-light" style={{ maxWidth: '400px', width: '80%' }}>
                 <div className="text-center mb-3">
                     <img src={img} alt="Logo" height="45em" style={{ marginBottom: '2vh' }} />
                     <h3>Log in to Network</h3>
@@ -103,14 +103,16 @@ const LoginPage = () => {
                             className="btn btn-success"
                             type="submit"
                             value="Log in"
-                            style={{ width: '95%' }}
+                            style={{ width: '100%',fontWeight:'bold' }}
                         />
                     </div>
                 </form>
-
                 <div className="text-center">
                     Don't have an account?&nbsp;
-                    <Link to="/signup" className="text-decoration-none">Sign up</Link>
+                    <Link to="/signup" className="link-hover">Sign up</Link>
+                </div>
+                <div className='text-center mt-2' style={{fontSize:'0.95rem'}}>
+                    <Link to="/reset-mail" className="link-hover">Forget Password</Link>
                 </div>
             </div>
         </div>

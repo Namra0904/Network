@@ -112,7 +112,7 @@ const Post = () => {
   return (
     <div
       style={{
-        maxHeight: '500px',
+        maxHeight: '90vh',
         overflowY: 'auto',
         padding: '10px',
         borderRadius: '8px',
@@ -125,6 +125,7 @@ const Post = () => {
           div::-webkit-scrollbar {
             display: none;
           }
+      }
         `}
       </style>
       {posts.map((post, index) => (

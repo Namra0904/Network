@@ -16,6 +16,7 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
             r'^/login/$',
             r'^/user/verify/$',
             r'^/user/resend_mail/$',
+            r'^/reset_send_mail/$',
             r'^/reset_password/[a-zA-Z0-9_\-\.]+/?$',
             r'^/media/.*$'  # Exempt all paths under /media/
         ]
