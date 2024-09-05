@@ -1,0 +1,168 @@
+/* App.css */
+
+/* Avatar Styling */
+.avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Active Navigation Link Styling */
+.nav-link.active b span,
+.nav-link.active span{
+  color: #28A745;
+}
+
+.nav-link.active svg {
+  color: #28A745;
+}
+
+/* Main Content Area Adjustments */
+main {
+  padding-bottom: 60px; /* To prevent content from being hidden behind BottomBar */
+}
+
+/* Fixed Top Navbar Adjustments */
+.navbar.fixed-top {
+  height: 60px;
+  z-index: 1050;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Fixed Bottom Navbar Adjustments */
+.navbar.fixed-bottom {
+  height: 60px;
+  z-index: 1050;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}
+
+/* Right Sidebar Adjustments */
+.right-sidebar {
+  width: 25%;
+  padding-top: 60px; /* To prevent overlap with fixed top navbar on mobile */
+}
+
+/* Ensure the Right Sidebar is above other content */
+.right-sidebar {
+  z-index: 1040;
+}
+
+/* User List Adjustments */
+.user-list .user-item img {
+  width: 40px;
+  height: 40px;
+}
+
+.nav-link {
+  padding: 10px 15px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease; /* Only the background color will transition */
+  color: #000; /* Ensure the initial color is black */
+}
+
+.nav-link:hover {
+  background-color: #e8f9eb; 
+  color: #28A745!important; 
+}
+
+.nav-link .fa {
+  color: #28A745; 
+}
+
+.nav-link:hover .fa {
+  color: #28A745 ;
+}
+
+.user-list-container::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in Chrome, Safari, and newer Edge */
+}
+
+
+.link-hover{
+  text-decoration: none !important;
+}
+.link-hover:hover{
+  text-decoration: underline !important;
+}
+
+
+.margin-top-responsive {
+  margin-top: 70px !important;
+  translate: -6px;
+ /* Default for mobile */
+}
+
+@media (min-width: 768px) { /* For tablets and up */
+  .margin-top-responsive {
+    margin-top: 50px !important;
+  }
+}
+
+@media (min-width: 992px) { /* For medium screens and up */
+  .margin-top-responsive {
+    margin-top: 20px !important;
+  }
+}
+
+@media (max-width: 992px) { 
+  .margin-top-responsive {
+    translate: 5px;
+    margin-inline:10px;
+    margin-inline-end: 10px!important;
+  }
+}
+
+@media (min-width:768px) and (max-width:992px) {
+  .margin-top-responsive {
+    width: 100% !important;
+    padding-right: 40px !important;;
+  }
+}
+
+@media (max-width:552px){
+  .user-list{
+    padding-right: 50px!important;
+  }
+}
+
+
+.create-post-btn {
+  padding: 10px 20px; /* Custom padding */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+  width:32vh;
+  height: 7vh;
+  margin-left:25px
+}
+
+.create-post-btn:hover {
+  background-color: #338c46; /* Darker green on hover */
+}
+
+/* .profile-card {
+  transition: background-color 0.3s, border-color 0.3s;
+  cursor: pointer;
+  color: inherit; 
+}
+
+.profile-card:hover {
+  background-color: #e7e7e7; 
+  border-color: #ccc; 
+} */
+
+
+.user-item:hover {
+  background-color: #f2f2f2; /* Slightly darker gray on hover */
+  cursor: pointer; /* Cursor changes to pointer on hover */
+}
+
+/* .user-item:hover .btn {
+  background-color: #007bff;  
+   color:white; 
+} */
+
