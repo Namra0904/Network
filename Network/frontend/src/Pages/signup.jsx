@@ -63,7 +63,7 @@ function Register(){
           <img src={img} height="45em" style={{ marginBottom: '2vh' }} alt="Logo" />
         </div>
 
-        <h3 className="text-center mb-4">Sign up for Network</h3>
+        <h3 className="text-center mb-4" style={{color: '#1e5b85'}}><b>Sign up for Network</b></h3>
 
         <div className="mb-3">
           <div className="row">

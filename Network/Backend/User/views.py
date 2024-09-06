@@ -239,7 +239,6 @@ def reset_send_mail(request):
 
         if user:
             token = generate_jwt_token(user)
-            print(token)
             reset_link = f"http://127.0.0.1:8000/reset-password/{token}/"
             subject = 'Password Reset'
             message = f"Please click on the link to reset your password: {reset_link}"
@@ -256,8 +255,9 @@ def reset_send_mail(request):
 
 def reset_password(request,token):
     if request.method == "POST":
-        password = request.POST.get('password')
-        password_confirmation = request.POST.get('password_confirmation')
+        data = json.loads(request.body)
+        password = data.get('password')
+        # password_confirmation = request.POST.get('password_confirmation')
 
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         if not payload:
@@ -266,10 +266,10 @@ def reset_password(request,token):
         user_id = payload['user_id']
         
         if hashlib.sha256(password.encode('utf-8')).hexdigest() == User.objects.get(id=user_id).password:
-            return JsonResponse({"error": "Password cannot be the same as the current password!"},status=400)
+            return JsonResponse({"error": "Password is already use enter new password!"},status=400)
             
-        if password != password_confirmation:
-            return JsonResponse({"error": "Passwords do not match!"}, status=400)
+        # if password != password_confirmation:
+        #     return JsonResponse({"error": "Passwords do not match!"}, status=400)
         try:
             user = User.objects.get(id=user_id)
             user.password = hashlib.sha256(password.encode('utf-8')).hexdigest()

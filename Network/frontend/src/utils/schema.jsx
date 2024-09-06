@@ -60,3 +60,20 @@ export const SignUpSchema = z
   export const ResetMailSchema = z.object({
     email: z.string().email({ message: "Invalid email address." }),
   })
+
+  export const ResetPasswordSchema = z.object({
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters." })
+      .max(20, {
+        message: "Password must be max 20 characters long.",
+      })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,20}$/,
+        "Password must include one small letter, one uppercase letter, and one number."
+      ),
+    confirmPassword: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords don't match.",
+  });

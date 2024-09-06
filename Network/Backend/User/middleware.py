@@ -37,7 +37,7 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
         if request.method == 'OPTIONS':
             return self.get_response(request)
 
-        if request.path.startswith('/admin/') or self._is_exempt_path(request.path):
+        if request.path.startswith('/admin') or self._is_exempt_path(request.path):
             return self.get_response(request)
         
         # Retrieve token from the Authorization header

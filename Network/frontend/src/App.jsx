@@ -11,6 +11,7 @@ import Search from './Components/Search';
 import Profile from './Components/Profile';
 import Saved from './Components/Saved';
 import ResetMail from './Pages/ResetMail';
+import ResetPassword from './Pages/ResetPassword';
 function App(){
   return (
     <>
@@ -22,6 +23,7 @@ function App(){
     <Route path="/signup" element={<Register />} />
     <Route path="/verify" element={<OTPVerification />} />
     <Route path="/reset-mail" element={<ResetMail />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="/home" element={<Layout />}>   
            {/* <Route index element={<Post />} /> */}
             <Route path="post" element={<Post />} />

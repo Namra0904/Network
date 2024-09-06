@@ -166,3 +166,29 @@ main {
    color:white; 
 } */
 
+/* src/ProfilePage.css */
+
+.profile-header {
+  border-bottom: 1px solid #dbdbdb;
+  padding-bottom: 20px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-tabs .nav-link {
+  color: #8e8e8e;
+  font-weight: bold;
+}
+
+.nav-tabs .nav-link.active {
+  color: #262626;
+  border-top: 3px solid #262626;
+}
+
+.posts-gallery img {
+  object-fit: cover;
+  height: 100%;
+}

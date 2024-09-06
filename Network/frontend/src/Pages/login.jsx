@@ -57,7 +57,7 @@ const LoginPage = () => {
             <div className="bg-white rounded p-4 shadow-sm bg-light" style={{ maxWidth: '400px', width: '80%' }}>
                 <div className="text-center mb-3">
                     <img src={img} alt="Logo" height="45em" style={{ marginBottom: '2vh' }} />
-                    <h3>Log in to Network</h3>
+                    <h3 style={{color: '#1e5b85'}}><b>Log in to Network</b></h3>
                 </div>
 
                 <form method="post" id="signin-form" onSubmit={handleSubmit(onSubmit)}>
