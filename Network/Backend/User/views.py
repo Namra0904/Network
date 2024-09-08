@@ -10,6 +10,7 @@ import random
 import hashlib
 import jwt
 import pytz
+from Post.models import Post
 
 def generate_otp():
     otp = random.randint(100000, 999999)
@@ -43,7 +44,7 @@ def register(request):
         if User.objects.filter(email=email).exists() or User.objects.filter(username=username).exists():
             return JsonResponse({"error": "Email or username is already registered."}, status=409)
 
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()  # to encode the password 
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()  
         
         user = User(
             username=username,
@@ -108,7 +109,6 @@ def update_user(request):
         user = User.objects.get(id=request.user.id)
         if user:
             if request.method == 'POST':
-
                 # old_username = user.username
                 old_email = user.email
 
@@ -116,6 +116,8 @@ def update_user(request):
                 firstname = request.POST.get('firstname', user.firstname)
                 lastname = request.POST.get('lastname', user.lastname)
                 dob = request.POST.get('dob', user.dob)
+                image = request.FILES.get('image',user.image)
+                bio = request.POST.get('bio',user.bio)
                 
             # Update user fields only if new data is provided
                 user.username = username
@@ -123,13 +125,12 @@ def update_user(request):
                 user.firstname = firstname
                 user.lastname = lastname
                 user.dob = dob
+                user.bio = bio
                 
-                # Update profile image if provided
-                # if 'image' in request.FILES:
-                #     user.image = request.FILES['image']
+                if 'image' in request.FILES:
+                    user.image = request.FILES['image']
                 
                 user.save()
-                # return redirect('profile')  # Redirect to profile page after updating
                 return JsonResponse({'Message':"Data Updated"})
         
         return JsonResponse({'message':"Can't Update"})
@@ -151,9 +152,7 @@ def verify_otp(request):
     
         entered_otp = data.get('otp')
         expiration_time = otp_obj.created_at + timedelta(minutes=3)
-        print(expiration_time)
         current = timezone.now()
-        print(current)
         if current > expiration_time:
             return JsonResponse({'error':'Otp is expire now'},status=500)
 
@@ -216,7 +215,8 @@ def change_password(request):
         else:
             return JsonResponse({"error": "Invalid request method."}, status=405)
     else:
-        return JsonResponse({"message": "Does not authenticated!"}, status=405)
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+
     
   
     
@@ -279,3 +279,79 @@ def reset_password(request,token):
             return JsonResponse({"error": "Invalid user."}, status=404)
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+def profile_data(request):
+    if request.user is not None:
+        if request.method == 'GET':
+            try:
+                user = User.objects.get(id=request.user.id)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'User not found'}, status=404)
+
+            # Fetch and convert user posts to a serializable format
+            posts = Post.objects.filter(creater=user)
+            user_posts = []
+            for post in posts:
+                comments_data = []
+                for comment in post.comments.all():
+                    comments_data.append({
+                        "profileImage": comment.commenter.image.url if comment.commenter.image else "",
+                        "username": comment.commenter.username,
+                        "text": comment.comment_content,
+                    })
+                liked_by_current_user = request.user in post.likers.all()
+                saved_by_current_user = request.user in post.savers.all()
+                user_posts.append({
+                    'postId': post.id,
+                    "date": post.date_created.strftime('%d-%m-%Y'),
+                    "content": post.content_text,
+                    "image": post.content_image.url if post.content_image else "",
+                    "likes": post.likers.count(),
+                    "liked_by_current_user": liked_by_current_user,
+                    "saved_by_current_user": saved_by_current_user,
+                    "comments": comments_data,
+                })
+
+            
+            # saved_posts = Post.saved_posts.all(user)
+            # saved_posts_data = []
+            # for post in saved_posts:
+            #     comments_data = []
+            #     for comment in post.comments.all():
+            #         comments_data.append({
+            #             "profileImage": comment.commenter.image.url if comment.commenter.image else "",
+            #             "username": comment.commenter.username,
+            #             "text": comment.comment_content,
+            #         })
+            #     liked_by_current_user = request.user in post.likers.all()
+            #     saved_by_current_user = request.user in post.savers.all()
+            #     saved_posts_data.append({
+            #         'postId': post.id,
+            #         "date": post.date_created.strftime('%d-%m-%Y'),
+            #         "content": post.content_text,
+            #         "image": post.content_image.url if post.content_image else "",
+            #         "likes": post.likers.count(),
+            #         "liked_by_current_user": liked_by_current_user,
+            #         "saved_by_current_user": saved_by_current_user,
+            #         "comments": comments_data,
+            #     })
+
+            # Prepare and return the final profile data
+            profile_data = {
+                "username": user.username,
+                "profileImage": user.image.url if user.image else "",
+                "posts": user_posts,
+                'firstname':user.firstname,
+                'lastname':user.lastname,
+                'name':user.firstname+' '+user.lastname,
+                'dob':  user.dob if user.dob else "",
+                'bio': user.bio,
+                # 'saved': saved_posts_data
+             }
+           
+            return JsonResponse(profile_data, status=200)
+        else:
+            return JsonResponse({"error": "Invalid request method."}, status=405)
+    else:
+        return JsonResponse({'error': 'Authentication required'}, status=401)

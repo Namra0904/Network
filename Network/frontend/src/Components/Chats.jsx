@@ -2,7 +2,7 @@ import React from 'react'
 
 const Chats = () => {
   return (
-    <div style={{border:"1px solid black"}}>
+    <div style={{border:"1px solid black "}} className="mg">
       <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex minus qui unde id ullam iste quod architecto veniam, in placeat, ipsam soluta quasi velit, at fugiat inventore eum repellat deserunt!
       Laudantium voluptate totam dicta facere expedita! Explicabo voluptate dolores enim qui magni, tenetur maxime et, dignissimos, natus repellendus deleniti. Corrupti vero repellendus aperiam natus ad incidunt, alias blanditiis commodi neque?
       Quo non repudiandae sunt voluptatum impedit maiores sed quasi expedita ipsum aperiam corrupti, enim voluptatibus ea incidunt omnis, facere voluptates minima! Fugiat libero nihil vero consectetur non asperiores, harum quam!

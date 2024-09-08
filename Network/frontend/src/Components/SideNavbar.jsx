@@ -13,11 +13,20 @@ import img from '../assets/Images/logo_icon.png';
 import RightSidebar from './RightSide';
 import TopBar from './TopBar';
 import '../App.css';
+import { Toaster } from 'react-hot-toast';
+
 
 const Sidebar = () => {
   
     const [showModal, setShowModal] = useState(false);
     const location = useLocation();
+
+    // <Toaster
+    //     position="bottom-right"
+    //     reverseOrder={true}
+    //     toastOptions={{ duration: 3000 }}
+    //     containerStyle={{ zIndex: 99 }}
+    //   />
 
     const handleLogout = () =>{
       // localStorage.removeItem('authToken');

@@ -77,3 +77,19 @@ export const SignUpSchema = z
     path: ["confirmPassword"],
     message: "Passwords don't match.",
   });
+
+
+ export const EditProfileSchema = z.object({
+  firstName: z.string().min(3, {
+    message: "First name must required.",
+  }),
+  lastName: z.string().min(3, {
+    message: "Last name must required.",
+  }),
+  username: z.string().min(3, {
+    message: "Username must be at least 3 characters.",
+  }),
+  bio: z.string().optional(),
+  dob: z.string().optional(),
+  profileImage: z.instanceof(File).optional()
+ })

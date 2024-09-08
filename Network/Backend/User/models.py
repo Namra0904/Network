@@ -13,6 +13,7 @@ class User(models.Model):
     dob = models.DateField(blank=True, null=True)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
+    bio = models.CharField(max_length=255,blank=True,null=True)
     is_verified = models.BooleanField(default=False)
 
     def __str__(self):

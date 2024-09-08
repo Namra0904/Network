@@ -6,14 +6,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router,Route,Routes } from 'react-router-dom';
 import Layout from './Pages/Layout';
 import Post from './Components/Post';
-import Chats from './Components/chats';
+// import Chats from './Components/chats';
 import Search from './Components/Search';
+import Chats from './Components/Chats';
 import Profile from './Components/Profile';
 import Saved from './Components/Saved';
 import ResetMail from './Pages/ResetMail';
 import ResetPassword from './Pages/ResetPassword';
 function App(){
-  return (
+  return (  
     <>
 
      <Router>

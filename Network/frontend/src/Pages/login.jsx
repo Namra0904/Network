@@ -6,9 +6,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginSchema } from "../utils/schema";
 import { Link, useNavigate } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const LoginPage = () => {
+//     <Toaster
+//     position="bottom-right"
+//     reverseOrder={true}
+//     toastOptions={{ duration: 3000 }}
+//     containerStyle={{ zIndex: 99 }}
+//   />
     const {
         register,
         handleSubmit,
@@ -38,6 +45,7 @@ const LoginPage = () => {
                 localStorage.setItem('authToken', response.data.token);
                 console.log('Login successful:', response.data);
                 navigate('/home/post')
+                toast.success('Login successful')
             }
         } catch (error) {
             if(error.response.data.error === 'Unverified'){

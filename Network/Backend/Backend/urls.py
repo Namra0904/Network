@@ -41,8 +41,8 @@ urlpatterns = [
     path('reset_send_mail/',us.reset_send_mail),
     path('user/resend_mail/',us.resend_mail),
     path('reset_password/<str:token>/',us.reset_password),
-    path('allpost/',ps.allPost)
-
+    path('allpost/',ps.allPost),
+    path('user/profile',us.profile_data)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,3 @@
-/* App.css */
-
-/* Avatar Styling */
 .avatar {
   width: 40px;
   height: 40px;
@@ -11,7 +8,6 @@
   font-weight: bold;
 }
 
-/* Active Navigation Link Styling */
 .nav-link.active b span,
 .nav-link.active span{
   color: #28A745;
@@ -21,12 +17,10 @@
   color: #28A745;
 }
 
-/* Main Content Area Adjustments */
 main {
-  padding-bottom: 60px; /* To prevent content from being hidden behind BottomBar */
+  padding-bottom: 60px; 
 }
 
-/* Fixed Top Navbar Adjustments */
 .navbar.fixed-top {
   height: 60px;
   z-index: 1050;
@@ -34,7 +28,6 @@ main {
   border-bottom: 1px solid #ddd;
 }
 
-/* Fixed Bottom Navbar Adjustments */
 .navbar.fixed-bottom {
   height: 60px;
   z-index: 1050;
@@ -42,18 +35,15 @@ main {
   border-top: 1px solid #ddd;
 }
 
-/* Right Sidebar Adjustments */
 .right-sidebar {
   width: 25%;
-  padding-top: 60px; /* To prevent overlap with fixed top navbar on mobile */
+  padding-top: 60px; 
 }
 
-/* Ensure the Right Sidebar is above other content */
 .right-sidebar {
   z-index: 1040;
 }
 
-/* User List Adjustments */
 .user-list .user-item img {
   width: 40px;
   height: 40px;
@@ -62,8 +52,8 @@ main {
 .nav-link {
   padding: 10px 15px;
   border-radius: 20px;
-  transition: background-color 0.3s ease; /* Only the background color will transition */
-  color: #000; /* Ensure the initial color is black */
+  transition: background-color 0.3s ease;
+  color: #000; 
 }
 
 .nav-link:hover {
@@ -80,7 +70,7 @@ main {
 }
 
 .user-list-container::-webkit-scrollbar {
-  display: none; /* Hides scrollbar in Chrome, Safari, and newer Edge */
+  display: none;
 }
 
 
@@ -93,18 +83,17 @@ main {
 
 
 .margin-top-responsive {
-  margin-top: 70px !important;
+  margin-top: 80px !important;
   translate: -6px;
- /* Default for mobile */
 }
 
-@media (min-width: 768px) { /* For tablets and up */
+@media (min-width: 768px) {
   .margin-top-responsive {
     margin-top: 50px !important;
   }
 }
 
-@media (min-width: 992px) { /* For medium screens and up */
+@media (min-width: 992px) { 
   .margin-top-responsive {
     margin-top: 20px !important;
   }
@@ -118,6 +107,13 @@ main {
   }
 }
 
+@media (max-width: 992px) { 
+  
+  .mg{
+    margin-left:-10px!important
+  }
+}
+
 @media (min-width:768px) and (max-width:992px) {
   .margin-top-responsive {
     width: 100% !important;
@@ -126,69 +122,105 @@ main {
 }
 
 @media (max-width:552px){
-  .user-list{
-    padding-right: 50px!important;
+  .user-list-container{
+    margin-right: 30px!important;
   }
 }
 
-
 .create-post-btn {
-  padding: 10px 20px; /* Custom padding */
-  transition: background-color 0.3s ease; /* Smooth background color transition */
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
   width:32vh;
   height: 7vh;
   margin-left:25px
 }
 
 .create-post-btn:hover {
-  background-color: #338c46; /* Darker green on hover */
+  background-color: #338c46; 
 }
-
-/* .profile-card {
-  transition: background-color 0.3s, border-color 0.3s;
-  cursor: pointer;
-  color: inherit; 
-}
-
-.profile-card:hover {
-  background-color: #e7e7e7; 
-  border-color: #ccc; 
-} */
-
 
 .user-item:hover {
-  background-color: #f2f2f2; /* Slightly darker gray on hover */
-  cursor: pointer; /* Cursor changes to pointer on hover */
+  background-color: #f2f2f2;
+  cursor: pointer; 
 }
 
-/* .user-item:hover .btn {
-  background-color: #007bff;  
-   color:white; 
-} */
-
-/* src/ProfilePage.css */
-
-.profile-header {
-  border-bottom: 1px solid #dbdbdb;
-  padding-bottom: 20px;
+.post-grid-scrollable {
+  max-height: 280px; 
+  overflow-y: auto; 
+  padding-right: 10px; 
 }
 
-.profile-stats {
-  display: flex;
-  gap: 20px;
+
+@media (min-width: 992px) {
+  .post-grid-scrollable {
+    height: 75vh; 
+  }
 }
 
-.nav-tabs .nav-link {
-  color: #8e8e8e;
-  font-weight: bold;
+@media (max-width: 768px) {
+  .post-grid-scrollable {
+    max-height: 50vh; 
+  }
 }
 
-.nav-tabs .nav-link.active {
-  color: #262626;
-  border-top: 3px solid #262626;
+.post-grid-scrollable::-webkit-scrollbar {
+  width: 6px;
 }
 
-.posts-gallery img {
-  object-fit: cover;
+@media (max-width:552){
+  .mg{
+    margin-left: -10px !important;
+  }
+}
+
+.post-grid-scrollable {
+  height: 80vh; 
+  overflow-y: auto; 
+}
+
+.post-grid-scrollable .post-item {
+  position: relative;
+  padding-top: 100%; 
+}
+
+.post-grid-scrollable img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
+  object-fit:cover; 
+  cursor: pointer;
+}
+
+.custom-modal-size .modal-dialog {
+  max-height: 90vh; 
+}
+
+.custom-modal-body {
+  max-height: calc(90vh - 150px); 
+  overflow-y: auto; 
+}
+
+.custom-modal-body::-webkit-scrollbar {
+  display: none; 
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+}
+
+@media (min-width: 768px) {
+  .profile-image {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (max-width:768px){
+  .custom-modal-body {
+    max-height: calc(90vh - 150px); 
+    overflow-y: auto;
+  }
 }
