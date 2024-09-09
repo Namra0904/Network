@@ -185,3 +185,44 @@ def allPost(request):
             return JsonResponse({'error': 'Invalid Method'}, status=405)
     else:
         return JsonResponse({'error': 'Authentication required'}, status=401)
+
+
+
+def saved_post(request):
+    if request.user is not None:
+        if request.method == 'GET':
+            posts = Post.objects.filter(savers=request.user).order_by('-date_created')  
+            
+            response_data = []
+
+            for post in posts:
+                comments_data = []
+                for comment in post.comments.all():
+                    comments_data.append({
+                        "profileImage": comment.commenter.image.url if comment.commenter.image else "",
+                        "username": comment.commenter.username,
+                        "text": comment.comment_content,
+                    })
+                liked_by_current_user = request.user in post.likers.all()
+                saved_by_current_user = request.user in post.savers.all()
+                post_data = {
+                    "profileImage": post.creater.image.url if post.creater.image else "",
+                    "username": post.creater.username,
+                    "date": post.date_created.strftime('%d-%m-%Y'),
+                    "content": post.content_text,
+                    "image": post.content_image.url if post.content_image else "",
+                    "likes": post.likers.count(),
+                    "postId":post.id,
+                    "userId":post.creater.id,
+                    "comments": comments_data,
+                    "userName":post.creater.firstname+" "+post.creater.lastname,
+                    "liked_by_current_user":liked_by_current_user,
+                    "saved_by_current_user":saved_by_current_user
+                }
+                response_data.append(post_data)
+            
+            return JsonResponse(response_data, safe=False, status=201)
+        else:
+            return JsonResponse({'error': 'Invalid Method'}, status=405)
+    else:
+        return JsonResponse({'error': 'Authentication required'}, status=401)

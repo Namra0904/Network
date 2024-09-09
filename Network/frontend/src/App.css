@@ -107,6 +107,13 @@ main {
   }
 }
 
+/* @media (max-width: 992px) { 
+  .ml{
+    translate: 5px;
+    margin-left: -5px!important;
+  }
+} */
+
 @media (max-width: 992px) { 
   
   .mg{

@@ -42,6 +42,7 @@ urlpatterns = [
     path('user/resend_mail/',us.resend_mail),
     path('reset_password/<str:token>/',us.reset_password),
     path('allpost/',ps.allPost),
+    path('savepost/',ps.saved_post),
     path('user/profile',us.profile_data)
 ]
 

@@ -77,7 +77,7 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
                     <Modal.Body className="custom-modal-body">
                         <div className="text-center mb-4">
                             <img
-                                src={'http://127.0.0.1:8000'+profileData.image ||previewImage || img}
+                                src={'http://127.0.0.1:8000'+profileData.image || previewImage || img}
                                 alt="Profile"
                                 className="rounded-circle"
                                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}
