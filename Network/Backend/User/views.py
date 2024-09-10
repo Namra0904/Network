@@ -1,5 +1,5 @@
 from django.http import JsonResponse , HttpResponse
-from .models import User , Otp
+from .models import User , Otp , PasswordResetRequest , BlacklistedToken
 from django.core.mail import send_mail
 from django.conf import settings
 import time
@@ -27,19 +27,12 @@ def generate_jwt(user):
     return token
 
 
-
-def home(request):
-    return JsonResponse({'message':'home page'})
-
 def register(request):    
     if request.method == 'POST':
         data = json.loads(request.body)
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
-        
-        # if password != password_confirmation:    
-        #     return JsonResponse({"error": "Passwords do not match."},status=400)
         
         if User.objects.filter(email=email).exists() or User.objects.filter(username=username).exists():
             return JsonResponse({"error": "Email or username is already registered."}, status=409)
@@ -67,14 +60,11 @@ def register(request):
     return JsonResponse({'message':"Can't Register!"},status=405)
 
 
-# method for user login
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         login_credential = data.get('login')
         password = data.get('password')
-        # login_credential = request.POST.get('login')
-        # password = request.POST.get('password')
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
         try:
@@ -109,7 +99,7 @@ def update_user(request):
         user = User.objects.get(id=request.user.id)
         if user:
             if request.method == 'POST':
-                # old_username = user.username
+
                 old_email = user.email
 
                 username = request.POST.get('username', user.username)
@@ -169,7 +159,7 @@ def verify_otp(request):
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-def resend_mail(request):
+def otp_resend_mail(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -216,30 +206,18 @@ def change_password(request):
             return JsonResponse({"error": "Invalid request method."}, status=405)
     else:
         return JsonResponse({'error': 'Authentication required'}, status=401)
-
     
-  
-    
-def generate_jwt_token(user):
-    payload = {
-        'user_id': user.id,
-        'email': user.email,
-        'exp': time.time() + 15 * 60,  # Token expires in 15 minutes
-        'iat': time.time(),  # Issued at
-    }
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-    return token
 
-def reset_send_mail(request):
+
+def rest_password_mail(request):
     if request.method == "POST":
         data = json.loads(request.body)
         email = data.get('email')
-        print(email)
         user = User.objects.filter(email=email).first()
 
         if user:
-            token = generate_jwt_token(user)
-            reset_link = f"http://127.0.0.1:8000/reset-password/{token}/"
+            reset_request = PasswordResetRequest.objects.create(user=user)
+            reset_link = f"http://127.0.0.1:5000/reset-password/{reset_request.reset_uuid}/"
             subject = 'Password Reset'
             message = f"Please click on the link to reset your password: {reset_link}"
             from_email = settings.EMAIL_HOST_USER
@@ -253,27 +231,24 @@ def reset_send_mail(request):
         return JsonResponse({"error": "Invalid request method."}, status=405)
     
 
-def reset_password(request,token):
+def reset_password(request,uuid):
     if request.method == "POST":
         data = json.loads(request.body)
         password = data.get('password')
-        # password_confirmation = request.POST.get('password_confirmation')
 
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-        if not payload:
-            return JsonResponse({"error": "Invalid or expired token."}, status=400)
+        reset_request = PasswordResetRequest.objects.get(reset_uuid=uuid, is_active=True)
+
+        if reset_request.is_expired():
+            return JsonResponse({"error": "Password reset link has expired."}, status=400)
         
-        user_id = payload['user_id']
-        
-        if hashlib.sha256(password.encode('utf-8')).hexdigest() == User.objects.get(id=user_id).password:
+        if hashlib.sha256(password.encode('utf-8')).hexdigest() == reset_request.user.password:
             return JsonResponse({"error": "Password is already use enter new password!"},status=400)
             
-        # if password != password_confirmation:
-        #     return JsonResponse({"error": "Passwords do not match!"}, status=400)
         try:
-            user = User.objects.get(id=user_id)
-            user.password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            user.save()
+            reset_request.user.password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            reset_request.user.save()
+            reset_request.is_active = False
+            reset_request.save()
             return JsonResponse({"success": "Password reset successful!"}, status=200)
         except User.DoesNotExist:
             return JsonResponse({"error": "Invalid user."}, status=404)
@@ -314,7 +289,7 @@ def profile_data(request):
                 })
 
             
-            # saved_posts = Post.saved_posts.all(user)
+            # saved_posts = Post.object.get(savers=user)
             # saved_posts_data = []
             # for post in saved_posts:
             #     comments_data = []
@@ -355,3 +330,14 @@ def profile_data(request):
             return JsonResponse({"error": "Invalid request method."}, status=405)
     else:
         return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+
+def logout(request):
+    if request.method == 'POST':
+        token = request.headers.get('Authorization')
+        print(token)
+        # if token:
+        #     BlacklistedToken.objects.create(token=token)
+        return JsonResponse({'success': 'Logged out successfully'},status=200)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)

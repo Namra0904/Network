@@ -20,7 +20,6 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
     // Update form values when profileData changes
     useEffect(() => {
         if (profileData) {
-            // console.log(new Date(profileData.dob))
             setValue('username', profileData.username);
             setValue('firstName', profileData.firstName);
             setValue('lastName', profileData.lastName);

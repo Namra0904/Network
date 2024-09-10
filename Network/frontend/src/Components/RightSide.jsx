@@ -14,8 +14,7 @@ const initialUsers = [
   { id: 8, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
   { id: 9, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
   { id: 10, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
-  
-  // Add more users as needed
+ 
 ];
 
 const RightSidebar = ({ isVisible, toggleSidebar }) => {

@@ -5,10 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifySchema } from '../utils/schema';
+import { useNavigate } from 'react-router-dom';
 
 const OTPVerification = () => {
   const [message, setMessage] = useState('');
   const [userId, setUserId] = useState(null);
+  const navigate = useNavigate()
 
   const {
     register,
@@ -39,7 +41,8 @@ const OTPVerification = () => {
       
       if (response.status === 201) {
         localStorage.setItem('authToken', response.data.token);
-        setMessage('OTP verified successfully! You are now authenticated.');
+        navigate('/home/post')
+        // setMessage('OTP verified successfully! You are now authenticated.');
       }
     } catch (error) {
       if (error.response.status === 500) console.log(error.response.data);

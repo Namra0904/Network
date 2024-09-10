@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+import uuid
+from datetime import timedelta
 # Create your models here.
 
 
@@ -24,3 +26,21 @@ class Otp(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otp')
     otp = models.CharField(max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True) 
+
+class PasswordResetRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reset_uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(default=timezone.now() + timedelta(minutes=15))  # Set expiration time to 15 minutes
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"Password Reset Request for {self.user.email}"
+    
+    
+class BlacklistedToken(models.Model):
+    token = models.CharField(max_length=255, unique=True)
+    added_at = models.DateTimeField(auto_now_add=True)

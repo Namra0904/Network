@@ -24,7 +24,7 @@ function App(){
     <Route path="/signup" element={<Register />} />
     <Route path="/verify" element={<OTPVerification />} />
     <Route path="/reset-mail" element={<ResetMail />} />
-    <Route path="/reset-password" element={<ResetPassword />} />
+    <Route path="/reset-password/:uuid" element={<ResetPassword />} />
     <Route path="/home" element={<Layout />}>   
            {/* <Route index element={<Post />} /> */}
             <Route path="post" element={<Post />} />

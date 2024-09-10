@@ -23,8 +23,7 @@ from Post import views as ps
 from Comment import views as cs
 
 urlpatterns = [
-   path('admin/', admin.site.urls),
-    path('',us.home,name="home"),
+    path('admin/', admin.site.urls),
     path('register/',us.register,name="register"),
     path('login/',us.login,name="login"),
     path('user/update/', us.update_user, name='update_user'),
@@ -38,12 +37,13 @@ urlpatterns = [
     path("user/post/<int:id>/update",ps.update_post, name="updatepost"),
     path('user/verify/',us.verify_otp,name="email_verified"),
     path('user/changepassword/',us.change_password,name="change_password"),
-    path('reset_send_mail/',us.reset_send_mail),
-    path('user/resend_mail/',us.resend_mail),
-    path('reset_password/<str:token>/',us.reset_password),
+    path('reset_send_mail/',us.rest_password_mail),
+    path('user/resend_mail/',us.otp_resend_mail),
+    path('reset-password/<uuid:uuid>/', us.reset_password),
     path('allpost/',ps.allPost),
     path('savepost/',ps.saved_post),
-    path('user/profile',us.profile_data)
+    path('user/profile',us.profile_data),
+    path('logout/',us.logout),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

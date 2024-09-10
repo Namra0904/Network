@@ -9,7 +9,6 @@ const Post = () => {
   const [posts, setPosts] = useState([]);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
   const [commentInputs, setCommentInputs] = useState({}); 
-
   const handleLike = async (postId, index) => {
     const updatedPosts = [...posts];
     try {
@@ -91,6 +90,7 @@ const Post = () => {
           liked: post.liked_by_current_user,
           saved: post.saved_by_current_user,
         }));
+    
         setPosts(postsWithLikedState);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -118,7 +118,7 @@ const Post = () => {
         borderRadius: '8px',
         scrollbarWidth: 'none', 
         msOverflowStyle: 'none',
-      }}
+      }} className='ml'
     >
       <style>
         {`
@@ -163,6 +163,7 @@ const Post = () => {
             </div>
 
             {/* Post Content */}
+           
             <div>
               <img
                 src={`http://127.0.0.1:8000/${post.image}`}

@@ -14,12 +14,15 @@ import RightSidebar from './RightSide';
 import TopBar from './TopBar';
 import '../App.css';
 import { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 
 const Sidebar = () => {
   
     const [showModal, setShowModal] = useState(false);
     const location = useLocation();
+    const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
+
 
     // <Toaster
     //     position="bottom-right"
@@ -28,10 +31,21 @@ const Sidebar = () => {
     //     containerStyle={{ zIndex: 99 }}
     //   />
 
-    const handleLogout = () =>{
-      // localStorage.removeItem('authToken');
-      // localStorage.removeItem('userId')
-     
+    const handleLogout = async() =>{
+      try{
+        const response = await axios.post('http://127.0.0.1:8000/logout/',{},
+          {
+            headers: { Authorization: authToken }
+          })
+          console.log(response)
+         if(response.status === 200){
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userId')
+          console.log(response.message)
+         }
+      }catch(error){
+          console.log(error.response)
+      }
     }
 
     const handleShowModal = () => {

@@ -54,7 +54,8 @@ const Profile = () => {
   // };
 
   const handlePostClick = (post) => {
-    setSelectedPost(post.image); 
+    console.log(post)
+    setSelectedPost(post); 
     setShowModal(true); 
   };
 
@@ -114,7 +115,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mg">
+    <div className="container mg">  
      <div className="row align-items-center post">
   <div className="col-4 col-md-4 text-center">
     <img

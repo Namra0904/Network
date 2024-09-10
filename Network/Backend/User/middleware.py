@@ -2,7 +2,7 @@ import jwt
 from django.conf import settings
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from .models import User
+from .models import User , BlacklistedToken
 import re
 import logging
 
@@ -17,12 +17,11 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
             r'^/user/verify/$',
             r'^/user/resend_mail/$',
             r'^/reset_send_mail/$',
-            r'^/reset_password/[a-zA-Z0-9_\-\.]+/?$',
-            r'^/media/.*$'  # Exempt all paths under /media/
+            r'^/reset-password/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/?$',
+            r'^/media/.*$'
         ]
 
     def _is_exempt_path(self, path):
-        # Check if the request path matches any of the exempt paths
         for exempt_path in self.exempt_paths:
             if re.match(exempt_path, path):
                 logger.info(f"Path exempted: {path}")
@@ -33,17 +32,18 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
     def __call__(self, request):
         logger.info(f"Request path: {request.path}")
 
-        # Skip authentication check for admin URLs or exempt paths
         if request.method == 'OPTIONS':
             return self.get_response(request)
-
         if request.path.startswith('/admin') or self._is_exempt_path(request.path):
             return self.get_response(request)
         
-        # Retrieve token from the Authorization header
         token = request.headers.get('Authorization')
         if not token:
             return JsonResponse({'error': 'Token missing'}, status=401)
+        # else:
+        #     blacklisted_token = BlacklistedToken.objects.filter(token=token).first()
+        #     if blacklisted_token:
+        #         return JsonResponse({'error': 'Token is blacklisted'}, status=403)
 
         try:
             # Decode the token
@@ -51,7 +51,7 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
 
             # Fetch the user based on the ID in the token payload
             user = User.objects.get(id=payload['id'])
-            request.user = user  # Set the user in the request for later use
+            request.user = user  
 
         except jwt.ExpiredSignatureError:
             return JsonResponse({'error': 'Token expired'}, status=401)
