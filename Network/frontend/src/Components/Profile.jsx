@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { ImageFill } from 'react-bootstrap-icons';
+// import { ImageFill } from 'react-bootstrap-icons';
 import axios from 'axios';
 import '../App.css';
 import img from "../assets/Images/pic_image.png";
-import { Heart, MessageCircle, Bookmark, SendHorizontal} from 'lucide-react';
 import EditProfile from './EditProfile';
+import SelectedPost from './SelectedPost';
+import { Link } from 'react-router-dom';
+
 
 const Profile = () => {
   const [showModal, setShowModal] = useState(false);
@@ -13,8 +15,9 @@ const Profile = () => {
   const [showEditModal, setShowEditModal] = useState(false); // State for Edit Profile modal
   const [activeTab, setActiveTab] = useState('posts'); // State for active tab
   const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
-  const [selectedFile, setSelectedFile] = useState(null); // For the selected file
-  const [previewImage, setPreviewImage] = useState(null); 
+  // const [commentInputs, setCommentInputs] = useState({}); 
+  // const [post_, setPosts] = useState(profileData.posts);
+
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -23,15 +26,48 @@ const Profile = () => {
     bio: '',
     dob: '',
     image: '',
-    posts: [],  // User posts
-    // saved: []   // Saved posts
+    posts: [],  
+    saved: [],
   });
+
+  const likeUnlike = async (postId,index) => {
+    try {
+      const post = profileData.posts[index];
+      const updatedPosts = [...profileData.posts];
+      if (!selectedPost.liked_by_user) {
+        await axios.put(`http://127.0.0.1:8000/user/post/${postId}/like`, {}, {
+          headers: { Authorization: authToken },
+        });
+        selectedPost.liked_by_user = true;
+        selectedPost.likes += 1;
+      } else {
+        await axios.put(`http://127.0.0.1:8000/user/post/${postId}/unlike`, {}, {
+          headers: { Authorization: authToken },
+        });
+        selectedPost.liked_by_user = false;
+        selectedPost.likes -= 1;
+      }
+      updatedPosts[index] = {
+        ...post,
+        liked_by_user:selectedPost.liked_by_user, 
+        likes: selectedPost.likes
+      };
+      setProfileData(prevState => ({
+        ...prevState,
+        posts: updatedPosts,
+      }));
+    } catch (error) {
+      console.error('Error liking/unliking post:', error);
+    }
+  };
+  
 
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/user/profile',
      { headers: { Authorization: authToken }}) 
       .then(response => {
         const data = response.data;
+       
         setProfileData({
           username: data.username,
           Name: data.name, 
@@ -40,22 +76,19 @@ const Profile = () => {
           bio: data.bio,
           dob: data.dob,
           image: data.profileImage,
-          posts: data.posts || [],    
-          // saved: data.saved || []    
-        });
+          posts: data.posts || [],   
+          saved: data.saved || []    
+        },
+      );
+      // setPosts(initializedPosts);
       })
       .catch(error => {
         console.error('Error fetching profile data:', error);
       });
   }, [authToken]); 
 
-  // const handleDeletePost = (postId) => {
-  //   console.log(`Deleting post ${postId}`);
-  // };
-
-  const handlePostClick = (post) => {
-    console.log(post)
-    setSelectedPost(post); 
+  const handlePostClick = (post,index) => {
+    setSelectedPost({ ...post, index });
     setShowModal(true); 
   };
 
@@ -67,49 +100,37 @@ const Profile = () => {
     setShowEditModal(true);
   };
 
-  const handleProfileInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleProfileUpdate = () => {
-    console.log('Updated profile data:', profileData);
-    setShowEditModal(false); 
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);  
-      setPreviewImage(imageUrl); 
-      setSelectedFile(file);  
-    }
-  };
-
   const renderPostGrid = (type) => {
     const posts = type === 'posts' ? profileData.posts : profileData.saved;
     
     if (!posts.length) {  
       return <p>No {type} available.</p>;
     }
+    const visiblePosts = type === 'saved' ? posts.slice(0, 6) : posts;
 
     return (
       <div className="post-grid-scrollable mt-2">
         <div className="row">
-          {posts.map((post, index) => (
+          {visiblePosts.map((post, index) => (
             <div className="col-6 col-md-4 mb-4" key={post.postId}>
               <div className="post-item">
                 <img
                   src={`http://127.0.0.1:8000/${post.image}`}
                   alt={`Post ${index + 1}`}
                   className="img-fluid "
-                  onClick={() => handlePostClick(post)}
+                  onClick={() => handlePostClick(post,index)}
                   style={{ cursor: 'pointer' }}
                 />
               </div>
             </div>
           ))}
         </div>
+        {type === 'saved' && posts.length > 6 && (
+        <div className="text-center">
+          <Link to="/home/saved" className="link-hover">See More Saved Posts</Link>
+
+        </div>
+      )}
       </div>
     );
   };
@@ -157,7 +178,7 @@ const Profile = () => {
             className={`nav-link ${activeTab === 'posts' ? 'active' : ''}`}
             onClick={() => setActiveTab('posts')}
           >
-            Posts
+          <b>Posts</b>
           </button>
         </li>
         <li className="nav-item">
@@ -165,175 +186,17 @@ const Profile = () => {
             className={`nav-link ${activeTab === 'saved' ? 'active' : ''}`}
             onClick={() => setActiveTab('saved')}
           >
-            Saved
+          <b>Saved</b>
           </button>
         </li>
       </ul>
 
 
-      {activeTab === 'posts' ? renderPostGrid('posts') : renderPostGrid('saved')}
+    {activeTab === 'posts' ? renderPostGrid('posts') : renderPostGrid('saved')}
 
-      <Modal show={showModal} onHide={handleClose} centered keyboard={false} animation={true}>
-      <Modal.Body className="text-center">
-        {selectedPost ? (
-          <div
-            key={selectedPost.index} 
-            className="card mb-3"
-            style={{
-              maxWidth: '500px',
-              borderRadius: '0px',
-              border: '1px solid #dbdbdb',
-              margin: '0 auto',
-            }}
-          >
-            <div className="card-body p-2">
-              <div className="d-flex align-items-center mb-2">
-                <div>
-                  <img
-                    src={selectedPost.profileImage || img}
-                    alt="profile"
-                    style={{
-                      width: '53px',
-                      height: '45px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </div>
-                <div>
-                  <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{selectedPost.userName}</h6>
-                  <p className="mb-0 text-muted" style={{ fontSize: '0.7rem' }}>
-                    @{selectedPost.username} · {selectedPost.time} {selectedPost.date}
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <img
-                  src={`http://127.0.0.1:8000/${selectedPost.image}`}
-                  className="img-fluid rounded mb-2"
-                  alt="Post"
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                  }}
-                />
-              </div>
-
-              <div className="d-flex justify-content-between mb-2 px-2">
-                <div className="d-flex align-items-center">
-                  <div className="d-flex align-items-center mr-2">
-                    <Heart
-                      style={{ cursor: 'pointer', color: selectedPost.liked ? 'red' : 'black' }}
-                      onClick={() => handleLike(selectedPost.postId, selectedPost.index)}
-                      fill={selectedPost.liked ? 'red' : 'white'}
-                    />
-                    {selectedPost.likes > 0 && <span style={{ fontSize: '0.8rem' }}>{selectedPost.likes}</span>}
-                  </div>
-                  <div className="d-flex align-items-center" onClick={() => toggleComments(selectedPost.index)} style={{ cursor: 'pointer' }}>
-                    <MessageCircle className="ms-1" style={{ cursor: 'pointer' }} />
-                    {Array.isArray(selectedPost.comments) && selectedPost.comments.length > 0 && (
-                      <span style={{ fontSize: '0.8rem' }}>{selectedPost.comments.length}</span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <Bookmark
-                    style={{ cursor: 'pointer', color: selectedPost.saved ? 'black' : 'black' }}
-                    onClick={() => handleSaved(selectedPost.postId, selectedPost.index)}
-                    fill={selectedPost.saved ? 'black' : 'white'}
-                  />
-                </div>
-              </div>
-
-              <p className="mb-2" style={{ fontSize: '0.9rem', marginLeft: '4px' }}>
-                {selectedPost.content || 'No content available'}  
-              </p>
-
-              {selectedPost.showComments && (
-                <div className="mt-2">
-                  <div className="text-center" style={{ fontSize: '0.95rem', marginBottom: '10px' }}>
-                    {Array.isArray(selectedPost.comments) && selectedPost.comments.length === 0 ? (
-                      <b>No comments</b>
-                    ) : (
-                      <b>Comments</b>
-                    )}
-                  </div>
-
-                  {Array.isArray(selectedPost.comments) && selectedPost.comments.length > 0 &&
-                    selectedPost.comments.map((comment, idx) => (
-                      <div key={idx}>
-                        <div className="mt-2 d-flex align-items-center">
-                          <img
-                            src={comment.profileImage || img} 
-                            alt="profile"
-                            style={{
-                              width: '53px',
-                              height: '45px',
-                              borderRadius: '50%',
-                              objectFit: 'cover',
-                            }}
-                          />
-                          <strong style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
-                        </div>
-                      
-                        <div className="ms-5">
-                          <p
-                            className="mb-0"
-                            style={{
-                              backgroundColor: '#F1F1F1',
-                              padding: '8px 12px',
-                              borderRadius: '12px',
-                              fontSize: '0.85rem',
-                              marginTop: '-10px',
-                            }}
-                          >
-                            {comment.text}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type="text"
-                      className="form-control mt-3"
-                      placeholder="Write a comment..."
-                      value={commentInputs[selectedPost.postId] || ''} 
-                      onChange={(e) => handleCommentChange(e, selectedPost.postId)}
-                      style={{
-                        fontSize: '0.8rem',
-                        padding: '0.35rem',
-                        paddingRight: '2.5rem', 
-                        borderRadius: '15px',
-                        borderColor: '#dbdbdb',
-                      }}
-                    />
-                    <SendHorizontal
-                      style={{
-                        position: 'absolute',
-                        right: '20px',
-                        cursor: 'pointer',
-                        color: '#888',
-                        marginTop: '-25px',
-                      }}
-                      size={20}
-                      onClick={() => handleCommentSubmit(selectedPost.postId, selectedPost.index)}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <p>No post selected</p>
-        )}
-      </Modal.Body>
-    </Modal>
-
-      <EditProfile showEditModal={showEditModal} setShowEditModal={setShowEditModal} profileData={profileData} />
+    <SelectedPost showModal={showModal} selectedPost={selectedPost} setShowModal={setShowModal} 
+    authToken={authToken} likeUnlike={likeUnlike}/>
+    <EditProfile showEditModal={showEditModal} setShowEditModal={setShowEditModal} profileData={profileData} />
     </div>
   );
 };

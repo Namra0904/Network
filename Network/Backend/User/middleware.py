@@ -30,20 +30,23 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
         return False
 
     def __call__(self, request):
+        
         logger.info(f"Request path: {request.path}")
+        print(request.path)
 
         if request.method == 'OPTIONS':
             return self.get_response(request)
+        
         if request.path.startswith('/admin') or self._is_exempt_path(request.path):
             return self.get_response(request)
         
         token = request.headers.get('Authorization')
         if not token:
             return JsonResponse({'error': 'Token missing'}, status=401)
-        # else:
-        #     blacklisted_token = BlacklistedToken.objects.filter(token=token).first()
-        #     if blacklisted_token:
-        #         return JsonResponse({'error': 'Token is blacklisted'}, status=403)
+        
+        blacklisted_token = BlacklistedToken.objects.filter(token=token).first()
+        if blacklisted_token:
+            return JsonResponse({'error': 'Token is Expired'}, status=403)
 
         try:
             # Decode the token

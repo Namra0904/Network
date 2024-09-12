@@ -28,7 +28,7 @@ def comment(request, id):
                 post.comment_count += 1
                 post.save()
 
-                return JsonResponse({'success': 'Comment added successfully.'}, status=201)
+                return JsonResponse({'success': 'Comment added successfully.','user':request.user.username}, status=201)
 
             except IntegrityError as e:
                 return JsonResponse({'error': 'Integrity error occurred: {}'.format(str(e))}, status=400)

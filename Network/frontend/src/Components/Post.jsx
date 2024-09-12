@@ -9,6 +9,7 @@ const Post = () => {
   const [posts, setPosts] = useState([]);
   const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
   const [commentInputs, setCommentInputs] = useState({}); 
+  
   const handleLike = async (postId, index) => {
     const updatedPosts = [...posts];
     try {
@@ -63,13 +64,13 @@ const Post = () => {
     }
     const updatedPosts = [...posts];
     try {
-      await axios.post(`http://127.0.0.1:8000/user/post/${postId}/write_comment`, {
+      const response = await axios.post(`http://127.0.0.1:8000/user/post/${postId}/write_comment`, {
         comment_text: commentText,
       }, {
         headers: { Authorization: authToken }
       });
       updatedPosts[index].comments.push({
-        // username: 'You',
+        username: response.data.user,
         text: commentText,
       });
       setPosts(updatedPosts);
@@ -112,7 +113,7 @@ const Post = () => {
   return (
     <div
       style={{
-        maxHeight: '90vh',
+        maxHeight: '85vh',
         overflowY: 'auto',
         padding: '10px',
         borderRadius: '8px',
@@ -216,7 +217,7 @@ const Post = () => {
             )}
           </div>
 
-{post.comments.length > 0 &&
+          {post.comments.length > 0 &&
             post.comments.map((comment, idx) => (
               <div key={idx}>
                 {/* Profile Image */}

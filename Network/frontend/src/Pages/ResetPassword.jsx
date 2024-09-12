@@ -5,8 +5,10 @@ import { ResetPasswordSchema } from '../utils/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
 
 const ResetPassword = () => {
   const {
@@ -17,6 +19,7 @@ const ResetPassword = () => {
     resolver: zodResolver(ResetPasswordSchema),
     mode: 'onChange',
 });
+const { uuid } = useParams()
 
 const [errorMessage, setErrorMessage] = useState('');
 const navigate = useNavigate()
@@ -25,7 +28,7 @@ const onSubmit = async (data) => {
   try {
       const response = await axios({
           method: 'POST',
-          url: 'http://127.0.0.1:8000/reset_password/<str:token>/',
+          url: `http://127.0.0.1:8000/reset-password/${uuid}/`,
           headers: {
               'Content-Type': 'application/json',
           },

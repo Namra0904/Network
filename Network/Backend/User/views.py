@@ -264,7 +264,6 @@ def profile_data(request):
             except User.DoesNotExist:
                 return JsonResponse({'error': 'User not found'}, status=404)
 
-            # Fetch and convert user posts to a serializable format
             posts = Post.objects.filter(creater=user)
             user_posts = []
             for post in posts:
@@ -278,39 +277,45 @@ def profile_data(request):
                 liked_by_current_user = request.user in post.likers.all()
                 saved_by_current_user = request.user in post.savers.all()
                 user_posts.append({
+                    "profileImage": post.creater.image.url if post.creater.image else "",
+                    "username": post.creater.username,
                     'postId': post.id,
                     "date": post.date_created.strftime('%d-%m-%Y'),
                     "content": post.content_text,
                     "image": post.content_image.url if post.content_image else "",
                     "likes": post.likers.count(),
-                    "liked_by_current_user": liked_by_current_user,
-                    "saved_by_current_user": saved_by_current_user,
+                    "liked_by_user": liked_by_current_user,
+                    "saved_by_user": saved_by_current_user,
                     "comments": comments_data,
+                    "userName":post.creater.firstname+" "+post.creater.lastname,
+                    "is_owner": request.user == post.creater 
                 })
-
-            
-            # saved_posts = Post.object.get(savers=user)
-            # saved_posts_data = []
-            # for post in saved_posts:
-            #     comments_data = []
-            #     for comment in post.comments.all():
-            #         comments_data.append({
-            #             "profileImage": comment.commenter.image.url if comment.commenter.image else "",
-            #             "username": comment.commenter.username,
-            #             "text": comment.comment_content,
-            #         })
-            #     liked_by_current_user = request.user in post.likers.all()
-            #     saved_by_current_user = request.user in post.savers.all()
-            #     saved_posts_data.append({
-            #         'postId': post.id,
-            #         "date": post.date_created.strftime('%d-%m-%Y'),
-            #         "content": post.content_text,
-            #         "image": post.content_image.url if post.content_image else "",
-            #         "likes": post.likers.count(),
-            #         "liked_by_current_user": liked_by_current_user,
-            #         "saved_by_current_user": saved_by_current_user,
-            #         "comments": comments_data,
-            #     })
+ 
+            saved_posts = Post.objects.filter(savers=user)
+            saved_posts_data = []
+            for post in saved_posts:
+                comments_data = []
+                for comment in post.comments.all():
+                    comments_data.append({
+                        "profileImage": comment.commenter.image.url if comment.commenter.image else "",
+                        "username": comment.commenter.username,
+                        "text": comment.comment_content,
+                    })
+                liked_by_current_user = request.user in post.likers.all()
+                saved_by_current_user = request.user in post.savers.all()
+                saved_posts_data.append({
+                    "profileImage": post.creater.image.url if post.creater.image else "",
+                    'postId': post.id,
+                    "date": post.date_created.strftime('%d-%m-%Y'),
+                    "content": post.content_text,
+                    "image": post.content_image.url if post.content_image else "",
+                    "likes": post.likers.count(),
+                    "liked_by_user": liked_by_current_user,
+                    "saved_by_user": saved_by_current_user,
+                    "comments": comments_data,
+                    "userName":post.creater.firstname+" "+post.creater.lastname,
+                    "is_owner": request.user == post.creater 
+                })
 
             # Prepare and return the final profile data
             profile_data = {
@@ -322,7 +327,7 @@ def profile_data(request):
                 'name':user.firstname+' '+user.lastname,
                 'dob':  user.dob if user.dob else "",
                 'bio': user.bio,
-                # 'saved': saved_posts_data
+                'saved': saved_posts_data
              }
            
             return JsonResponse(profile_data, status=200)
@@ -336,8 +341,8 @@ def logout(request):
     if request.method == 'POST':
         token = request.headers.get('Authorization')
         print(token)
-        # if token:
-        #     BlacklistedToken.objects.create(token=token)
+        if token:
+            BlacklistedToken.objects.create(token=token)
         return JsonResponse({'success': 'Logged out successfully'},status=200)
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
