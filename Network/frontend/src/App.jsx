@@ -30,7 +30,7 @@ function App(){
             <Route path="post" element={<Post />} />
             <Route path="search" element={<Search />} />
             <Route path="chats" element={<Chats />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:username" element={<Profile />} />
             <Route path="saved" element={<Saved />}></Route>
             {/* <Route path="create-post" element={<CreatePostModal />} /> */}
     </Route>

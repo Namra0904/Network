@@ -21,6 +21,7 @@ from django.conf import settings
 from User import views as us
 from Post import views as ps
 from Comment import views as cs
+from Follow import views as fs
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,8 +43,13 @@ urlpatterns = [
     path('reset-password/<uuid:uuid>/', us.reset_password),
     path('allpost/',ps.allPost),
     path('savepost/',ps.saved_post),
-    path('user/profile',us.profile_data),
+    path('user/profile/<str:username>/',us.profile_data),
+    path('user/',us.user_data),
     path('logout/',us.logout),
+    path('search/',fs.search_users),
+    path('follow/<str:username>/',fs.follow),
+    path('unfollow/<str:username>/',fs.unfollow)
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

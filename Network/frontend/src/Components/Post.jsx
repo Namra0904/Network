@@ -236,16 +236,7 @@ const Post = () => {
                 </div>
               
                 <div className="ms-5">
-                  <p
-                    className="mb-0"
-                    style={{
-                      backgroundColor: '#F1F1F1',
-                      padding: '8px 12px',
-                      borderRadius: '12px',
-                      fontSize: '0.85rem',
-                      marginTop: '-10px',
-                    }}
-                  >
+                <p class="mb-0" style={{backgroundColor: rgb(241, 241, 241), padding: '8px 12px', borderRadius: '12px', fontSize: '0.85rem', marginTop: '-10px'}}>
                     {comment.text}
                   </p>
                 </div>
@@ -258,12 +249,12 @@ const Post = () => {
               type="text"
               className="form-control mt-3"
               placeholder="Write a comment..."
-              value={commentInputs[post.postId] || ''} // Bind the input value to the comment state
+              value={commentInputs[post.postId] || ''} 
               onChange={(e) => handleCommentChange(e, post.postId)}
               style={{
                 fontSize: '0.8rem',
                 padding: '0.35rem',
-                paddingRight: '2.5rem', // Adjust padding to make space for the icon
+                paddingRight: '2.5rem', 
                 borderRadius: '15px',
                 borderColor: '#dbdbdb',
               }}

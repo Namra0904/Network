@@ -45,7 +45,7 @@ const LoginPage = () => {
                 localStorage.setItem('authToken', response.data.token);
                 console.log('Login successful:', response.data);
                 navigate('/home/post')
-                toast.success('Login successful')
+                // toast.success('Login successful')
             }
         } catch (error) {
             if(error.response.data.error === 'Unverified'){

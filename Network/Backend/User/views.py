@@ -1,16 +1,17 @@
 from django.http import JsonResponse , HttpResponse
 from .models import User , Otp , PasswordResetRequest , BlacklistedToken
-from django.core.mail import send_mail
-from django.conf import settings
-import time
-import json
 from datetime import datetime, timedelta
 from django.utils import timezone 
+from django.core.mail import send_mail
+from django.conf import settings
+from Post.models import Post
+from Follow.models import Follower
+import json
 import random
 import hashlib
 import jwt
 import pytz
-from Post.models import Post
+
 
 def generate_otp():
     otp = random.randint(100000, 999999)
@@ -254,16 +255,27 @@ def reset_password(request,uuid):
             return JsonResponse({"error": "Invalid user."}, status=404)
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
+    
+    
+def logout(request):
+    if request.method == 'POST':
+        token = request.headers.get('Authorization')
+        print(token)
+        if token:
+            BlacklistedToken.objects.create(token=token)
+        return JsonResponse({'success': 'Logged out successfully'},status=200)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-def profile_data(request):
+
+def profile_data(request,username):
     if request.user is not None:
         if request.method == 'GET':
             try:
-                user = User.objects.get(id=request.user.id)
+                user = User.objects.get(username=username)
             except User.DoesNotExist:
                 return JsonResponse({'error': 'User not found'}, status=404)
-
             posts = Post.objects.filter(creater=user)
             user_posts = []
             for post in posts:
@@ -317,7 +329,10 @@ def profile_data(request):
                     "is_owner": request.user == post.creater 
                 })
 
-            # Prepare and return the final profile data
+            follower_count = user.followers.count()  # Users following the current user
+            following_count = Follower.objects.filter(followers=user).count()
+            is_following = Follower.objects.filter(followers=request.user).exists()
+            print(is_following)
             profile_data = {
                 "username": user.username,
                 "profileImage": user.image.url if user.image else "",
@@ -327,9 +342,12 @@ def profile_data(request):
                 'name':user.firstname+' '+user.lastname,
                 'dob':  user.dob if user.dob else "",
                 'bio': user.bio,
-                'saved': saved_posts_data
-             }
-           
+                'saved': saved_posts_data,
+                'followers':follower_count,
+                'following':following_count,
+                'is_user':request.user == user,
+                'is_following':is_following
+            }
             return JsonResponse(profile_data, status=200)
         else:
             return JsonResponse({"error": "Invalid request method."}, status=405)
@@ -337,12 +355,17 @@ def profile_data(request):
         return JsonResponse({'error': 'Authentication required'}, status=401)
     
 
-def logout(request):
-    if request.method == 'POST':
-        token = request.headers.get('Authorization')
-        print(token)
-        if token:
-            BlacklistedToken.objects.create(token=token)
-        return JsonResponse({'success': 'Logged out successfully'},status=200)
+def user_data(request):
+    if request.user is not None:
+        if request.method == "GET":
+            user = request.user
+            data = {
+                "username": user.username,
+                "firstname":user.firstname,
+                "lastname":user.lastname,
+            }
+            return JsonResponse(data,status=200)
+        else:
+            return JsonResponse({"error": "Invalid request method."}, status=405)
     else:
-        return JsonResponse({"error": "Invalid request method."}, status=405)
+        return JsonResponse({'error': 'Authentication required'}, status=401)

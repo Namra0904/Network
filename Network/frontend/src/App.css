@@ -81,7 +81,12 @@ main {
   text-decoration: underline !important;
 }
 
-
+.user-info{
+  text-decoration: none;
+}
+.user-info p:hover{
+  text-decoration: underline !important;
+}
 .margin-top-responsive {
   margin-top: 80px !important;
   translate: -6px;
