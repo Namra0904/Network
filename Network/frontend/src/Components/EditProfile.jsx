@@ -39,8 +39,6 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
     };
 
     const onSubmit = async (data) => {
-        console.log('Form data:', data);
-        console.log(authToken);
         try {
             const formData = new FormData();
             formData.append('username', data.username);
@@ -51,14 +49,13 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
             if (selectedFile) {
                 formData.append('image', selectedFile);
             }
-
+            
             const response = await axios.post('http://127.0.0.1:8000/user/update/', formData, {
                 headers: {
                     Authorization: authToken,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
             console.log('Profile updated successfully:', response.data);
             setShowEditModal(false);
         } catch (error) {
@@ -76,7 +73,7 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
                     <Modal.Body className="custom-modal-body">
                         <div className="text-center mb-4">
                             <img
-                                src={'http://127.0.0.1:8000'+profileData.image || previewImage || img}
+                                src={`http://127.0.0.1:8000/${profileData.image}` || previewImage || img}
                                 alt="Profile"
                                 className="rounded-circle"
                                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}

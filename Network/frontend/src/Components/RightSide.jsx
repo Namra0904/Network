@@ -58,14 +58,20 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
       console.error('Error unfollowing user:', error);
     }
   };
+  const handlereload =()=>
+  {
+    setTimeout(()=>{
+      location.reload();
+    },1);
+  }
 
-  const handleFollowToggle = (username, isFollowed) => {
-    if (isFollowed) {
-      handleUnfollow(username);
-    } else {
-      handleFollow(username);
-    }
-  };
+  // const handleFollowToggle = (username, isFollowed) => {
+  //   if (isFollowed) {
+  //     handleUnfollow(username);
+  //   } else {
+  //     handleFollow(username);
+  //   }
+  // };
 
   const handleShowMoreLessToggle = () => {
     if (showAllUsers) {
@@ -80,7 +86,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
     setSearchQuery(e.target.value);
   };
 
-  const showShowMoreButton = users.length >= 4; // Only show if there are 4 or more users
+  const showShowMoreButton = users.length >= 4;
 
   return (
     <>
@@ -126,7 +132,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
                   className="rounded-circle me-3"
                   style={{ width: '35px', height: '35px' }} 
                 />
-                <Link to={`/home/profile/${user.username}`} className="user-info flex-grow-1">
+                <Link to={`/home/profile/${user.username}`} onClick={handlereload} className="user-info flex-grow-1">
                   <p className="mb-0 text-dark" style={{ fontSize: '13px' }}>
                     <b>{user.firstname} {user.lastname}</b>
                   </p>
@@ -134,12 +140,21 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
                     @{user.username}
                   </small>
                 </Link>
-                <button
+                {/* <button
                   className={`btn btn-sm ${user.isFollowed ? 'btn-primary' : 'btn-outline-primary'}`}
                   onClick={() => handleFollowToggle(user.username, user.isFollowed)}
                 >
                   {user.isFollowed ? 'Unfollow' : 'Follow'}
-                </button>
+                </button> */}
+                {user.isFollowed ? (
+              <button className="btn btn-primary btn-sm ms-3" onClick={handleUnfollow()}>
+                Unfollow
+              </button>
+            ) : (
+              <button className="btn btn-outline-primary btn-sm ms-3" onClick={handleFollow()}>
+                Follow
+              </button>
+            )}
               </div>
             ))}
             {showShowMoreButton && (

@@ -6,9 +6,11 @@ import EditProfile from './EditProfile';
 import SelectedPost from './SelectedPost';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import CreatePostModal from './CreatePost';
 
 
 const Profile = () => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -170,6 +172,10 @@ const Profile = () => {
     setShowModal(true); 
   };
 
+  const handleCloseModal = () => {
+    setShowCreateModal(false);
+  };
+
   const handleClose = () => {
     setShowModal(false);
   };
@@ -181,13 +187,45 @@ const Profile = () => {
   const renderPostGrid = (type) => {
     const posts = type === 'posts' ? profileData.posts : profileData.saved;
     
-    if (!posts.length) {  
-      return <p>No {type} available.</p>;
+    if (!posts.length) {
+      let message;
+      let additionalContent = null;
+      let showUsername = false;
+    
+      if (type === 'posts') {
+        message = "Capture the moments with friends";
+        additionalContent = (
+          <a className="mt-2 link-hover" style={{cursor:'pointer'}}onClick={() => { setShowCreateModal(true); }}>
+            Create a new post
+          </a>
+        );
+      } else if (type === 'saved') {
+        message = "No saved posts available";
+        showUsername = true;
+      } else {
+        message = "No posts available";
+      }
+    
+      return (
+        <div className="text-center mt-5">
+          <h5>
+          <b>
+            {message}
+            <br /> 
+            {showUsername && `for @${profileData.username}`}
+          </b></h5>
+          {additionalContent}
+        </div>
+      );
     }
+    
+    
     const visiblePosts = type === 'saved' ? posts.slice(0, 6) : posts;
 
     return (
-      <div className="post-grid-scrollable mt-2">
+      
+      <div className="post-grid-scrollable mt-2" style={{scrollbarWidth: 'none', 
+        msOverflowStyle: 'none',}}>
         <div className="row">
           {visiblePosts.map((post, index) => (
             <div className="col-6 col-md-4 mb-4" key={post.postId}>
@@ -214,7 +252,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mg">  
+    <div className="container mg  no-scrollbar">  
      <div className="row align-items-center post">
   <div className="col-4 col-md-4 text-center">
     <img
@@ -289,6 +327,7 @@ const Profile = () => {
     authToken={authToken} likeUnlike={likeUnlike} savedUnsaved={savedUnsaved} handleDeletePost={handleDeletePost} setDeleteModel={setDeleteModel}
     deleteModel={deleteModel}/>
     <EditProfile showEditModal={showEditModal} setShowEditModal={setShowEditModal} profileData={profileData} />
+    <CreatePostModal showModal={showCreateModal} handleCloseModal={handleCloseModal} />
     </div>
   );
 };

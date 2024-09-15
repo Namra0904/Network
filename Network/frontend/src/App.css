@@ -112,12 +112,12 @@ main {
   }
 }
 
-/* @media (max-width: 992px) { 
+@media (max-width: 992px) { 
   .ml{
-    translate: 5px;
-    margin-left: -5px!important;
+    margin-left: -18px!important;
+    translate:-5px ;
   }
-} */
+}
 
 @media (max-width: 992px) { 
   
@@ -156,7 +156,7 @@ main {
   cursor: pointer; 
 }
 
-.post-grid-scrollable {
+/* .post-grid-scrollable {
   max-height: 280px; 
   overflow-y: auto; 
   padding-right: 10px; 
@@ -177,7 +177,7 @@ main {
 
 .post-grid-scrollable::-webkit-scrollbar {
   width: 6px;
-}
+} */
 
 @media (max-width:552){
   .mg{
@@ -185,7 +185,7 @@ main {
   }
 }
 
-.post-grid-scrollable {
+/* .post-grid-scrollable {
   height: 80vh; 
   overflow-y: auto; 
 }
@@ -203,7 +203,7 @@ main {
   height: 100%;
   object-fit:cover; 
   cursor: pointer;
-}
+} */
 
 .custom-modal-size .modal-dialog {
   max-height: 90vh; 
@@ -250,4 +250,64 @@ main {
 
 .nav-tabs .nav-link:hover {
   color: green; /* Optional: change color on hover */
+}
+
+/* Container for the entire profile section */
+.container.mg {
+  max-height: 100vh;
+  overflow-y: auto; /* Enable scrolling for the entire profile */
+  padding-right: 10px; /* Optional for spacing */
+}
+
+/* Post grid section with hidden scrollbar */
+.post-grid-scrollable {
+  height: 80vh; /* Adjust height for the post grid */
+  overflow-y: scroll; /* Hide overflow and prevent scrolling */
+}
+
+.post-grid-scrollable .post-item {
+  position: relative;
+  padding-top: 100%; /* To ensure the items remain in a square grid */
+}
+
+.post-grid-scrollable img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.post-grid-scrollable {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;  /* IE 10+ hides scrollbar */
+}
+
+/* Hide vertical scrollbar on the post grid */
+.post-grid-scrollable::-webkit-scrollbar {
+  display: none;
+
+}
+
+@media (min-width: 992px) {
+  .post-grid-scrollable {
+    height: 75vh; /* Adjust for larger screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .post-grid-scrollable {
+    height: 60vh; /* Adjust for mobile screens */
+  }
+}
+
+.no-scrollbar {
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  overflow-x: hidden; /* Disable horizontal overflow */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit-based browsers like Chrome */
 }

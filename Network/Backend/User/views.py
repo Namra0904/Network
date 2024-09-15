@@ -12,7 +12,6 @@ import hashlib
 import jwt
 import pytz
 
-
 def generate_otp():
     otp = random.randint(100000, 999999)
     return str(otp)
@@ -93,40 +92,74 @@ def login(request):
 
     return JsonResponse({'message':"Can't Login!"},status=500)
 
+import datetime
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
 
 def update_user(request):
+    if not request.user is not None:
+        return JsonResponse({"error": "User is not authenticated"}, status=401)
 
-    if request.user is not None:
+    try:
         user = User.objects.get(id=request.user.id)
-        if user:
-            if request.method == 'POST':
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User does not exist"}, status=404)
 
-                old_email = user.email
-
-                username = request.POST.get('username', user.username)
-                firstname = request.POST.get('firstname', user.firstname)
-                lastname = request.POST.get('lastname', user.lastname)
-                dob = request.POST.get('dob', user.dob)
-                image = request.FILES.get('image',user.image)
-                bio = request.POST.get('bio',user.bio)
-                
-            # Update user fields only if new data is provided
-                user.username = username
-                user.email = old_email
-                user.firstname = firstname
-                user.lastname = lastname
-                user.dob = dob
-                user.bio = bio
-                
-                if 'image' in request.FILES:
-                    user.image = request.FILES['image']
-                
-                user.save()
-                return JsonResponse({'Message':"Data Updated"})
+    if request.method == 'POST':
+        old_email = user.email
         
-        return JsonResponse({'message':"Can't Update"})
-    else:
-        return JsonResponse({"error": "Invalid request method."}, status=405)
+        # Get values from the request, fallback to existing values if not provided
+        username = request.POST.get('username', user.username)
+        firstname = request.POST.get('firstname', user.firstname)
+        lastname = request.POST.get('lastname', user.lastname)
+        dob = request.POST.get('dob', user.dob)
+        image = request.FILES.get('image', user.image)
+        bio = request.POST.get('bio', user.bio)
+
+        # Check if the new username already exists in the database (excluding the current user)
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            return JsonResponse({'error': "Username already exists"}, status=400)
+
+        # Validate and format the date of birth (dob)
+        if dob:
+            try:
+                dob = datetime.datetime.strptime(dob, '%Y-%m-%d').date()
+            except ValueError:
+                return JsonResponse({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=400)
+
+        # Update user fields
+        user.username = username
+        user.email = old_email  # Keep the same email
+        user.firstname = firstname
+        user.lastname = lastname
+        user.dob = dob
+        user.bio = bio
+
+        # Update the image if provided
+        if 'image' in request.FILES:
+            user.image = request.FILES['image']
+
+        # Save the updated user
+        try:
+            user.full_clean() 
+            user.save()
+            return JsonResponse({'message': "Data Updated", 'user': {
+                'username': user.username,
+                'firstname': user.firstname,
+                'lastname': user.lastname,
+                'dob': user.dob,
+                'bio': user.bio,
+                'image_url': user.image.url if user.image else None,
+            }}, status=200)
+        except ValidationError as e:
+            return JsonResponse({'error': e.message_dict}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+
 
 
 def verify_otp(request):
@@ -353,7 +386,7 @@ def profile_data(request,username):
             return JsonResponse({"error": "Invalid request method."}, status=405)
     else:
         return JsonResponse({'error': 'Authentication required'}, status=401)
-    
+
 
 def user_data(request):
     if request.user is not None:

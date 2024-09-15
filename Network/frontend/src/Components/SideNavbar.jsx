@@ -45,6 +45,10 @@ const Sidebar = () => {
         });
     }, [authToken]); 
 
+    const handlereload =()=>
+      {
+        location.reload();
+      }
     
     const handleLogout = async() =>{
       try{
@@ -144,7 +148,7 @@ const Sidebar = () => {
             JD
           </div>
          
-            <Link to={`/home/profile/${userData.username}`} style={{ textDecoration: 'none' }}>
+            <Link to={`/home/profile/${userData.username}`} style={{ textDecoration: 'none' }} onClick={handlereload}>
               <p className="mb-0 text-dark">
                 <b style={{ fontSize: '15px' }}>{userData.firstName} {userData.lastName}</b>
               </p>

@@ -113,13 +113,15 @@ const Post = () => {
   return (
     <div
       style={{
-        maxHeight: '85vh',
+        marginTop:"10px",
+        maxHeight:'85vh',
         overflowY: 'auto',
         padding: '10px',
         borderRadius: '8px',
         scrollbarWidth: 'none', 
         msOverflowStyle: 'none',
-      }} className='ml'
+      }} 
+      className='ml'
     >
       <style>
         {`

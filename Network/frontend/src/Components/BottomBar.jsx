@@ -11,9 +11,6 @@ const BottomBar = () => {
 
 
   const handleNavigation = (path) => {
-    // if (isRightSidebarVisible) {
-    //     toggleRightSidebar(); 
-    //   }
     navigate(path);
   };
 
