@@ -13,7 +13,7 @@ import img from '../assets/Images/logo_icon.png';
 import RightSidebar from './RightSide';
 import TopBar from './TopBar';
 import '../App.css';
-import { Toaster } from 'react-hot-toast';
+// import { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
 
@@ -22,15 +22,30 @@ const Sidebar = () => {
     const [showModal, setShowModal] = useState(false);
     const location = useLocation();
     const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
+    const [userData,setUserData] = useState({
+      firstName : "",
+      lastName : "",
+      username: "",
+    })
 
+    useEffect(() => {
+      axios.get(`http://127.0.0.1:8000/user/`,
+       { headers: { Authorization: authToken }}) 
+        .then(response => {
+          const data = response.data;
+          setUserData({
+            firstName:data.firstname,
+            lastName:data.lastname,
+            username:data.username
+        })
+        
+        })
+        .catch(error => {
+          console.error('Error fetching user data:', error);
+        });
+    }, [authToken]); 
 
-    // <Toaster
-    //     position="bottom-right"
-    //     reverseOrder={true}
-    //     toastOptions={{ duration: 3000 }}
-    //     containerStyle={{ zIndex: 99 }}
-    //   />
-
+    
     const handleLogout = async() =>{
       try{
         const response = await axios.post('http://127.0.0.1:8000/logout/',{},
@@ -129,13 +144,12 @@ const Sidebar = () => {
             JD
           </div>
          
-            <Link to="/home/profile" style={{ textDecoration: 'none' }}>
+            <Link to={`/home/profile/${userData.username}`} style={{ textDecoration: 'none' }}>
               <p className="mb-0 text-dark">
-                <b style={{ fontSize: '15px' }}>John Doe</b>
+                <b style={{ fontSize: '15px' }}>{userData.firstName} {userData.lastName}</b>
               </p>
-              <small className='text-dark' style={{ fontSize: '12px' }}>johndoe@gmail.com</small>
+              <small className='text-dark' style={{ fontSize: '12px' }}>@{userData.username}</small>
             </Link>
-         
         </div>
       </nav>
 

@@ -236,7 +236,7 @@ const Post = () => {
                 </div>
               
                 <div className="ms-5">
-                <p class="mb-0" style={{backgroundColor: rgb(241, 241, 241), padding: '8px 12px', borderRadius: '12px', fontSize: '0.85rem', marginTop: '-10px'}}>
+                <p class="mb-0" style={{backgroundColor: 'rgb(241, 241, 241)', padding: '8px 12px', borderRadius: '12px', fontSize: '0.85rem', marginTop: '-10px'}}>
                     {comment.text}
                   </p>
                 </div>

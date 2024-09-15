@@ -137,10 +137,12 @@ const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnl
                 </div>
               </div>
 
-              <p className="mb-2" style={{ fontSize: '0.9rem', marginLeft: '4px' }}>
+             <div style={{textAlign:'Left',marginLeft:"8px"}}>
+             <p className="mb-2" style={{ fontSize: '0.9rem' }}>
                 {selectedPost.content}
               </p>
 
+             </div>
               {showComments && (
                 <div className="mt-2">
                   <div className="text-center" style={{ fontSize: '0.95rem', marginBottom: '10px' }}>
