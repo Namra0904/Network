@@ -13,7 +13,7 @@ import img from '../assets/Images/logo_icon.png';
 import RightSidebar from './RightSide';
 import TopBar from './TopBar';
 import '../App.css';
-// import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 
 
@@ -61,6 +61,7 @@ const Sidebar = () => {
           localStorage.removeItem('authToken');
           localStorage.removeItem('userId')
           console.log(response.message)
+          toast.success("Logout Scuccessfully")
          }
       }catch(error){
           console.log(error.response)

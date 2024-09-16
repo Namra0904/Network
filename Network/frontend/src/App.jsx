@@ -13,11 +13,18 @@ import Profile from './Components/Profile';
 import Saved from './Components/Saved';
 import ResetMail from './Pages/ResetMail';
 import ResetPassword from './Pages/ResetPassword';
+import { Toaster } from 'react-hot-toast';
 function App(){
   return (  
     <>
 
      <Router>
+     <Toaster
+        position="bottom-right"
+        reverseOrder={true}
+        toastOptions={{ duration: 3000 }}
+        containerStyle={{ zIndex: 99 }}
+      />
       <Routes>
       <Route path="/" element={<LoginPage />} />
     <Route path="/login" element={<LoginPage />} />

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
 
 const ResetPassword = () => {
   const {
@@ -38,6 +38,7 @@ const onSubmit = async (data) => {
       });
       if (response.status === 200) {
          console.log(response.data)
+         toast.success("Password Reset Successfully")
          navigate('/login')
       }
   } catch (error) {

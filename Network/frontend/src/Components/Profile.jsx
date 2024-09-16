@@ -7,6 +7,7 @@ import SelectedPost from './SelectedPost';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import CreatePostModal from './CreatePost';
+import toast from 'react-hot-toast';
 
 
 const Profile = () => {
@@ -122,9 +123,12 @@ const Profile = () => {
 
   const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/user/post/${postId}/delete/`, {
+      const response = await axios.delete(`http://127.0.0.1:8000/user/post/${postId}/delete/`, {
         headers: { Authorization: authToken },
       });
+      if(response.status == 200){
+        toast.success("Post Deleted Successfully")
+      }
       const updatedPosts = profileData.posts.filter((post) => post.postId !== postId);
       const updatedSaved = profileData.saved.filter((savedPost) => savedPost.postId !== postId);
       setProfileData(prevState => ({
@@ -258,7 +262,8 @@ const Profile = () => {
     <img
       src={profileData.image ? 'http://127.0.0.1:8000/'+profileData.image : img}
       alt="Profile"
-      className="rounded-circle img-fluid profile-image"
+      className="rounded-circle img-fluid profile-image" 
+      style={{aspectRatio: '1/ 1'}}
     />
   </div>
   <div className="col-8 col-md-8">

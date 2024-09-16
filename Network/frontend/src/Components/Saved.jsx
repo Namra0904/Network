@@ -112,7 +112,8 @@ const Saved = () => {
   return (
     <div
       style={{
-        maxHeight: '90vh',
+        marginTop:"10px",
+        maxHeight: '85vh',
         overflowY: 'auto',
         padding: '10px',
         borderRadius: '8px',
@@ -129,7 +130,7 @@ const Saved = () => {
         `}
       </style>
       {posts.length === 0 ? (
-        <h1 style={{ color: '#888' }} className='mt-5 text-center'>No saved posts yet</h1>
+        <h1 style={{ color: '#888' }} className='mt-5 text-center'><b>No saved posts</b></h1>
       ) :( posts.map((post, index) => (
         <div
           key={index}
@@ -223,12 +224,13 @@ const Saved = () => {
                 {/* Profile Image */}
                 <div className="mt-2 d-flex align-items-center">
                   <img
-                    src={comment.profileImage ? comment.profileImage : img}
+                    src={comment.profileImage ? 'http://127.0.0.1:8000/'+comment.profileImage : img}
                     alt="profile"
                     style={{
                       width: '53px',
                       height: '45px',
                       borderRadius: '50%',
+                       aspectRatio:'1/1',
                       objectFit: 'cover',
                     }}
                   />

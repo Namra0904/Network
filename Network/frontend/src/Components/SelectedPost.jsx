@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import img from "../assets/Images/pic_image.png";
 import DeletePost from './DeletePost';
 
+
 const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnlike,savedUnsaved,handleDeletePost,setDeleteModel,deleteModel}) => {
 
   const [commentInputs, setCommentInputs] = useState({});
@@ -159,13 +160,14 @@ const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnl
                       <div key={idx}>
                           <div className="mt-2 d-flex align-items-center">
                   <img
-                    src={comment.profileImage ? comment.profileImage : img}
+                    src={comment.profileImage ? 'http://127.0.0.1:8000/'+comment.profileImage : img}
                     alt="profile"
                     style={{
                       width: '53px',
                       height: '45px',
                       borderRadius: '50%',
                       objectFit: 'cover',
+                      aspectRatio:'1/1'
                     }}
                   />
                   <strong style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>

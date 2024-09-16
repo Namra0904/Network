@@ -92,8 +92,7 @@ def login(request):
 
     return JsonResponse({'message':"Can't Login!"},status=500)
 
-import datetime
-from django.http import JsonResponse
+
 from django.core.exceptions import ValidationError
 
 def update_user(request):
@@ -110,10 +109,10 @@ def update_user(request):
         
         # Get values from the request, fallback to existing values if not provided
         username = request.POST.get('username', user.username)
-        firstname = request.POST.get('firstname', user.firstname)
-        lastname = request.POST.get('lastname', user.lastname)
+        firstname = request.POST.get('firstName', user.firstname)
+        lastname = request.POST.get('lastName', user.lastname)
         dob = request.POST.get('dob', user.dob)
-        image = request.FILES.get('image', user.image)
+        # image = request.FILES.get('image', user.image)
         bio = request.POST.get('bio', user.bio)
 
         # Check if the new username already exists in the database (excluding the current user)
@@ -123,7 +122,7 @@ def update_user(request):
         # Validate and format the date of birth (dob)
         if dob:
             try:
-                dob = datetime.datetime.strptime(dob, '%Y-%m-%d').date()
+              user.dob = dob
             except ValueError:
                 return JsonResponse({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=400)
 
@@ -132,7 +131,6 @@ def update_user(request):
         user.email = old_email  # Keep the same email
         user.firstname = firstname
         user.lastname = lastname
-        user.dob = dob
         user.bio = bio
 
         # Update the image if provided
@@ -141,7 +139,7 @@ def update_user(request):
 
         # Save the updated user
         try:
-            user.full_clean() 
+         
             user.save()
             return JsonResponse({'message': "Data Updated", 'user': {
                 'username': user.username,
@@ -269,7 +267,7 @@ def reset_password(request,uuid):
     if request.method == "POST":
         data = json.loads(request.body)
         password = data.get('password')
-
+         
         reset_request = PasswordResetRequest.objects.get(reset_uuid=uuid, is_active=True)
 
         if reset_request.is_expired():

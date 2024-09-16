@@ -311,3 +311,40 @@ main {
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Hide scrollbar for WebKit-based browsers like Chrome */
 }
+
+
+/* Chats.css */
+/* .user-list {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+.chat-messages {
+  background-color: #f5f5f5;
+  border-radius: 0 0 10px 10px;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.list-group-item.active img {
+  border: 2px solid white;
+}
+
+.chat-messages div {
+  word-wrap: break-word;
+}
+
+input.form-control {
+  border-radius: 20px;
+}
+
+button.btn {
+  border-radius: 20px;
+}
+
+input.form-control:focus {
+  box-shadow: none;
+} */

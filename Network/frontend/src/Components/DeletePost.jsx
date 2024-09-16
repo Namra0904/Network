@@ -4,8 +4,6 @@ import { useState } from 'react';
 import axios from 'axios';
 const DeletePost = ({ postIdToDelete, showModal, setDeleteModel,handleDeletePost}) => {
 
-    
-    
   return (
     <div>
       <Modal show={showModal} onHide={()=>setDeleteModel(false)} centered keyboard={false} animation={true}>

@@ -26,6 +26,7 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
             if re.match(exempt_path, path):
                 logger.info(f"Path exempted: {path}")
                 return True
+            
         logger.info(f"Path not exempted: {path}")
         return False
 

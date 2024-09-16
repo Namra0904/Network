@@ -40,17 +40,21 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
 
     const onSubmit = async (data) => {
         try {
-            const formData = new FormData();
-            formData.append('username', data.username);
-            formData.append('firstname', data.firstName);
-            formData.append('lastname', data.lastName);
-            formData.append('bio', data.bio);
-            formData.append('dob', data.dob);
-            if (selectedFile) {
-                formData.append('image', selectedFile);
-            }
+            // const formData = new FormData();
+            // formData.append('username', data.username);
+            // formData.append('firstname', data.firstName);
+            // formData.append('lastname', data.lastName);
+            // formData.append('bio', data.bio);
+            // formData.append('dob', data.dob);
+            // if (selectedFile) {
+            //     formData.append('image', selectedFile);
+            // }
+            // console.log(formData)
+
+            data.image = selectedFile
+            console.log(data)
             
-            const response = await axios.post('http://127.0.0.1:8000/user/update/', formData, {
+            const response = await axios.post('http://127.0.0.1:8000/user/update/', data, {
                 headers: {
                     Authorization: authToken,
                     'Content-Type': 'multipart/form-data',
@@ -73,10 +77,13 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
                     <Modal.Body className="custom-modal-body">
                         <div className="text-center mb-4">
                             <img
-                                src={`http://127.0.0.1:8000/${profileData.image}` || previewImage || img}
+                               src={
+                                previewImage ||
+                                (profileData.image ? `http://127.0.0.1:8000/${profileData.image}` : img)
+                            }
                                 alt="Profile"
                                 className="rounded-circle"
-                                style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+                                style={{ width: '150px', height: '150px', objectFit: 'cover', }}
                             />
                             <div className="mt-2">
                                 <label className="btn btn-link text-success">

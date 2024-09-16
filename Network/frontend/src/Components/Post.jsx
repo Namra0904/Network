@@ -225,7 +225,7 @@ const Post = () => {
                 {/* Profile Image */}
                 <div className="mt-2 d-flex align-items-center">
                   <img
-                    src={comment.profileImage ? comment.profileImage : img}
+                    src={comment.profileImage ? 'http://127.0.0.1:8000/'+comment.profileImage : img}
                     alt="profile"
                     style={{
                       width: '53px',

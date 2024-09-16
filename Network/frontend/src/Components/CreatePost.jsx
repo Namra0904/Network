@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, CloseButton } from 'react-bootstrap';
 import { ImageFill } from 'react-bootstrap-icons';
 import axios from 'axios'; 
+import toast from 'react-hot-toast';
 
 
 const CreatePostModal = ({ showModal, handleCloseModal }) => {
@@ -34,6 +35,7 @@ const CreatePostModal = ({ showModal, handleCloseModal }) => {
 
       if (response.status === 201) {
         handleCloseModal(); 
+        toast.success("Posted Successfully Created")
       }
     } catch (error) {
       console.error('There was an error creating the post:', error);
