@@ -1,14 +1,18 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { FaHome, FaPlus, FaUser, FaUsers, FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import CreatePostModal from './CreatePost';
 import Main from './Main';
+import axios from 'axios';
 
 const BottomBar = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-
+  const [userData,setUserData] = useState({
+    username: "",
+  })
+  const [authToken,setAuthToken]=useState(()=>localStorage.getItem("authToken"))
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -24,6 +28,22 @@ const BottomBar = () => {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/user/`,
+     { headers: { Authorization: authToken }}) 
+      .then(response => {
+        const data = response.data;
+        setUserData({
+          username:data.username
+      })
+      
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }, [authToken]); 
+
 
 
   return (
@@ -68,9 +88,9 @@ const BottomBar = () => {
       <button 
         className={`nav-link text-dark d-flex flex-column align-items-center mt-2
           ${
-            isActive('/home/profile') ? 'active' : ''
+            isActive(`/home/profile/${userData.username}`) ? 'active' : ''
           }`}
-        onClick={() => handleNavigation("/home/profile")}>
+        onClick={() => handleNavigation(`/home/profile/${userData.username}`)}>
         <FaUser size={28} />
         <small>Profile</small>
       </button>

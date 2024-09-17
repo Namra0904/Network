@@ -147,10 +147,10 @@ const Post = () => {
             <div className="d-flex align-items-center mb-2">
                       <div>
                 <img
-                  src={post.profileImage ? post.profileImage : img}
+                  src={post.profileImage ? `http://127.0.0.1:8000${post.profileImage}` : img}
                   alt="profile"
                   style={{
-                    width: '53px',
+                    width: post.profileImage ? '45px' : '53px', 
                     height: '45px',
                     borderRadius: '50%',
                     objectFit: 'cover',
@@ -158,8 +158,8 @@ const Post = () => {
                 />
               </div>
               <div>
-                <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem'}}>{post.userName}</h6>
-                <p className="mb-0 text-muted" style={{ fontSize: '0.7rem' }}>
+                <h6 className={`mb-0 ${post.profileImage ? 'ms-2' : ''}`}  style={{ fontWeight: 'bold', fontSize: '0.85rem'}}>{post.userName}</h6>
+                <p className={`mb-0 ${post.profileImage ? 'ms-2' : ''} text-muted`}  style={{ fontSize: '0.7rem' }}>
                   @{post.username} · {post.time} {post.date}
                 </p>
               </div>
@@ -228,13 +228,13 @@ const Post = () => {
                     src={comment.profileImage ? 'http://127.0.0.1:8000/'+comment.profileImage : img}
                     alt="profile"
                     style={{
-                      width: '53px',
+                      width: comment.profileImage ? '45px' : '53px',
                       height: '45px',
                       borderRadius: '50%',
                       objectFit: 'cover',
                     }}
                   />
-                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
+                  <strong className={ `${comment.profileImage ? 'ms-2' : ''}`} style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
                 </div>
               
                 <div className="ms-5">

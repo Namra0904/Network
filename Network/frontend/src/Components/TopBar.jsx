@@ -1,13 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     FaSignOutAlt,
     FaSearch,
   } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import img from '../assets/Images/logo_icon.png';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const TopBar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const [authToken,setAuthToken] = useState(()=>localStorage.getItem('authToken'))
+
+    const handleLogout = async() =>{
+      try{
+        console.log('hi')
+        const response = await axios.post('http://127.0.0.1:8000/logout/',{},
+          {
+            headers: { Authorization: authToken }
+          })
+          console.log(response)
+         if(response.status === 200){
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userId')
+          navigate('/login')
+          console.log(response.message)
+          toast.success("Logout Scuccessfully")
+         }
+      }catch(error){
+          console.log(error.response)
+      }
+    }
     
     const isSearchPage = location.pathname === '/home/search'; 
   return (
@@ -48,6 +73,7 @@ const TopBar = () => {
       <FaSignOutAlt
         size={28}
         className="nav-link text-dark"
+        onClick={handleLogout}
       />
     )}
   </div>
