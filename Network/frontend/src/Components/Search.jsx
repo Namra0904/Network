@@ -3,62 +3,98 @@ import { useNavigate } from 'react-router-dom'; // Assuming you're using react-r
 import '../App.css';
 import BottomBar from './BottomBar';
 
-const initialUsers = [
-  { id: 1, name: 'John Doe', username: '@johndoe', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 2, name: 'Jane Smith', username: '@janesmith', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 3, name: 'Mike Johnson', username: '@mikejohnson', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 4, name: 'Emily Davis', username: '@emilydavis', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 5, name: 'David Wilson', username: '@davidwilson', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 6, name: 'Sarah Brown', username: '@sarahbrown', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 7, name: 'Chris Lee', username: '@chrislee', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 8, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 9, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
-  { id: 10, name: 'Laura Green', username: '@lauragreen', img: 'https://via.placeholder.com/40', isFollowed: false },
-  
-  // Add more users as needed
-];
+
 
 const Search = ({ isVisible, toggleSidebar }) => {
-  const [users, setUsers] = useState(initialUsers);
-  const [visibleUsersCount, setVisibleUsersCount] = useState(3);
+  const [users, setUsers] = useState([]);
+  const [visibleUsersCount, setVisibleUsersCount] = useState(5);
   const [showAllUsers, setShowAllUsers] = useState(false);
-  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 552) {
-        navigate('/home/post'); // Navigate to /home/post when window width is greater than 552px
-      } else {
-        navigate('/home/search'); // Navigate back to /home/search when window width is less than or equal to 552px
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/search/', {
+          search: searchQuery
+        }, {
+          headers: { Authorization: `${authToken}` }
+        });
+        if (response.data.users && response.data.users.length > 0) {
+          setUsers(response.data.users);
+        } else {
+          setUsers([]); // No users found, set to empty array
+        }
+        console.log(response.data.users);
+       
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    
-    // Initial check
-    handleResize();
+    fetchUsers();
+  }, [searchQuery]);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [history]);
+  const handleFollow = async (username) => {
+    try {
+      await axios.put(`http://127.0.0.1:8000/follow/${username}/`, {}, {
+        headers: { Authorization: `${authToken}` }
+      });
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.username === username ? { ...user, isFollowed: true } : user
+        )
+      );
+    } catch (error) {
+      console.error('Error following user:', error);
+    }
+  };
 
-  const handleFollowToggle = (id) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === id ? { ...user, isFollowed: !user.isFollowed } : user
-      )
-    );
+  const handleUnfollow = async (username) => {
+    try {
+      await axios.put(`http://127.0.0.1:8000/unfollow/${username}/`, {}, {
+        headers: { Authorization: `${authToken}` }
+      });
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.username === username ? { ...user, isFollowed: false } : user
+        )
+      );
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+    }
+  };
+
+  const handlereload =()=>
+  {
+    setTimeout(()=>{
+      location.reload();
+    },1);
+  }
+
+  const handleFollowToggle = (username, isFollowed) => {
+    if (isFollowed) {
+      handleUnfollow(username);
+    } else {
+      handleFollow(username);
+    }
   };
 
   const handleShowMoreLessToggle = () => {
     if (showAllUsers) {
-      setVisibleUsersCount(3); // Show only initial 3 users
+      setVisibleUsersCount(5); // Show only initial 3 users
     } else {
       setVisibleUsersCount(users.length); // Show all users
     }
     setShowAllUsers(!showAllUsers);
   };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const showShowMoreButton = users.length >= 5;
+
 
   return (
     <>

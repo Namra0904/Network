@@ -16,17 +16,16 @@ const TopBar = () => {
 
     const handleLogout = async() =>{
       try{
-        console.log('hi')
+        console.log("Hi")
         const response = await axios.post('http://127.0.0.1:8000/logout/',{},
           {
             headers: { Authorization: authToken }
           })
-          console.log(response)
+          console.log(response.status)
          if(response.status === 200){
           localStorage.removeItem('authToken');
           localStorage.removeItem('userId')
           navigate('/login')
-          console.log(response.message)
           toast.success("Logout Scuccessfully")
          }
       }catch(error){

@@ -6,6 +6,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from Post.models import Post
 from Follow.models import Follower
+from django.template.loader import render_to_string
+from Follow.models import Follower
 import json
 import random
 import hashlib
@@ -50,6 +52,13 @@ def register(request):
         otp_value = generate_otp()
         otp_obj = Otp.objects.create(user=user, otp=otp_value)
         subject = 'Welcome to My App'
+        # html_message = render_to_string('email_verification.html', {
+        #     'first_name': user.firstname, 
+        #     'otp': otp_value,
+        #     'username': user.username,
+        #     'project_name': 'My Network Project'
+        # })
+        
         message = f'Thank you for signing up for our app! Your Verification code is {otp_value} '
         from_email = settings.EMAIL_HOST_USER
 
@@ -76,6 +85,7 @@ def login(request):
                 
             if user.is_verified:
                 token = generate_jwt(user)
+                namra , created=Follower.objects.get_or_create(user=user)
                 return JsonResponse({"message": "Login successful.", "token": token})
             else:
                 if Otp.objects.filter(user=user).exists():
@@ -109,8 +119,8 @@ def update_user(request):
         
         # Get values from the request, fallback to existing values if not provided
         username = request.POST.get('username', user.username)
-        firstname = request.POST.get('firstName', user.firstname)
-        lastname = request.POST.get('lastName', user.lastname)
+        firstname = request.POST.get('firstname', user.firstname)
+        lastname = request.POST.get('lastname', user.lastname)
         dob = request.POST.get('dob', user.dob)
         # image = request.FILES.get('image', user.image)
         bio = request.POST.get('bio', user.bio)
@@ -127,6 +137,7 @@ def update_user(request):
                 return JsonResponse({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=400)
 
         # Update user fields
+        
         user.username = username
         user.email = old_email  # Keep the same email
         user.firstname = firstname
@@ -139,7 +150,7 @@ def update_user(request):
 
         # Save the updated user
         try:
-         
+            print(user.lastname)
             user.save()
             return JsonResponse({'message': "Data Updated", 'user': {
                 'username': user.username,
@@ -180,6 +191,7 @@ def verify_otp(request):
 
         if entered_otp == otp_obj.otp:
             user.is_verified = True  
+            namra , created=Follower.objects.get_or_create(user=user)
             user.save()
             token = generate_jwt(user)
             otp_obj.delete()  
@@ -290,6 +302,7 @@ def reset_password(request,uuid):
     
 def logout(request):
     if request.method == 'POST':
+        print("Hi")
         token = request.headers.get('Authorization')
         print(token)
         if token:
@@ -359,8 +372,10 @@ def profile_data(request,username):
                     "userName":post.creater.firstname+" "+post.creater.lastname,
                     "is_owner": request.user == post.creater 
                 })
-
-            follower_count = user.followers.count()  # Users following the current user
+            try:
+                follower_count = Follower.objects.get(user=user).followers.count()
+            except :
+                follower_count = 0  # Users following the current user
             following_count = Follower.objects.filter(followers=user).count()
             is_following = Follower.objects.filter(followers=request.user).exists()
             print(is_following)
@@ -394,6 +409,7 @@ def user_data(request):
                 "username": user.username,
                 "firstname":user.firstname,
                 "lastname":user.lastname,
+                "profileImage":user.image.url if user.image else None
             }
             return JsonResponse(data,status=200)
         else:

@@ -30,6 +30,8 @@ const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnl
       selectedPost.comments.push({
         username: response.data.user , 
         text: commentText,
+        profileImage:response.data.image
+
       });
       setCommentInputs({ ...commentInputs, [postId]: '' });
     } catch (error) {
@@ -65,22 +67,26 @@ const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnl
             <div className="card-body p-2">
               <div className="d-flex align-items-center mb-2">
                 <div>
-                  <img
-                    src={selectedPost.profileImage || img}
-                    alt="profile"
-                    style={{
-                      width: '53px',
-                      height: '45px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                    }}
-                  />
+                <img
+          src={selectedPost.profileImage ? `http://127.0.0.1:8000/${selectedPost.profileImage}` : img}
+          alt="profile"
+          style={{
+            width: selectedPost.profileImage ? '45px' : '53px',
+            height: '45px',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            aspectRatio:"1/1"
+          }}
+        />
+
                 </div>
                 <div className="">
-                  <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
+                  <h6 className="mb-0" style={{ fontWeight: 'bold', fontSize: '0.85rem',
+                    marginLeft: selectedPost.profileImage ? '-28px' : '-22px',
+                   }}>
                     {selectedPost.userName}
                   </h6>
-                  <p className="mb-0 text-muted" style={{ fontSize: '0.7rem' }}>
+                  <p  className={`mb-0 ${selectedPost.profileImage ? 'ms-2' : ''} text-muted`} style={{ fontSize: '0.7rem' }}>
                     @{selectedPost.username} · {selectedPost.time} {selectedPost.date}
                   </p>
                 </div>
@@ -163,14 +169,14 @@ const SelectedPost = ({ showModal, setShowModal,selectedPost, authToken ,likeUnl
                     src={comment.profileImage ? 'http://127.0.0.1:8000/'+comment.profileImage : img}
                     alt="profile"
                     style={{
-                      width: '53px',
+                      width: comment.profileImage ? '45px' : '53px',
                       height: '45px',
                       borderRadius: '50%',
                       objectFit: 'cover',
-                      aspectRatio:'1/1'
+                   
                     }}
                   />
-                  <strong style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
+                  <strong className={ `${comment.profileImage ? 'ms-2' : ''}`} style={{ fontSize: '0.85rem', display: 'block' }}>{comment.username}</strong>
                 </div>
               
                 <div className="ms-5">

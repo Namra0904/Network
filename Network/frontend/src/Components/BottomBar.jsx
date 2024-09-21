@@ -56,7 +56,7 @@ const BottomBar = () => {
         <FaHome size={28} />
         <small>Posts</small>
       </button>
-      <button 
+      {/* <button 
         className={`nav-link text-dark d-flex flex-column align-items-center mt-2 ${
           isActive("/home/search") ? 'active' : ''
         }`} 
@@ -68,7 +68,7 @@ const BottomBar = () => {
         }}>
         <FaSearch size={28} />
         <small>Search</small>
-      </button>
+      </button> */}
       <button 
         className="nav-link text-dark d-flex flex-column align-items-center mt-2" 
         onClick={() => model()}>
@@ -76,14 +76,14 @@ const BottomBar = () => {
         <small>Create</small>
       </button>
      
-      <button 
+      {/* <button 
         className={`nav-link text-dark d-flex flex-column align-items-center mt-2 ${
           isActive('/home/chats') ? 'active' : ''
         }`} 
         onClick={() => handleNavigation("/home/chats")}>
         <FaUsers size={28} />
         <small>Chats</small>
-      </button>
+      </button> */}
       
       <button 
         className={`nav-link text-dark d-flex flex-column align-items-center mt-2

@@ -197,18 +197,24 @@ const Profile = () => {
       let showUsername = false;
     
       if (type === 'posts') {
-        message = "Capture the moments with friends";
-        additionalContent = (
-          <a className="mt-2 link-hover" style={{cursor:'pointer'}}onClick={() => { setShowCreateModal(true); }}>
-            Create a new post
-          </a>
-        );
+        if(profileData.isUser){
+          message = "Capture the moments with friends";
+          additionalContent = (
+            <a className="mt-2 link-hover" style={{cursor:'pointer'}}onClick={() => { setShowCreateModal(true); }}>
+              Create a new post
+            </a>
+          );
+        }
+        else{
+          message = "No posts available";
+        }
       } else if (type === 'saved') {
         message = "No saved posts available";
         showUsername = true;
       } else {
         message = "No posts available";
       }
+    
     
       return (
         <div className="text-center mt-5">

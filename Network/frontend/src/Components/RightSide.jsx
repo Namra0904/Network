@@ -4,10 +4,12 @@ import { FaSearch } from 'react-icons/fa';
 import '../App.css';
 import BottomBar from './BottomBar';
 import { Link } from 'react-router-dom';
+import img from "../assets/Images/pic_image.png";
+
 
 const RightSidebar = ({ isVisible, toggleSidebar }) => {
   const [users, setUsers] = useState([]);
-  const [visibleUsersCount, setVisibleUsersCount] = useState(3);
+  const [visibleUsersCount, setVisibleUsersCount] = useState(5);
   const [showAllUsers, setShowAllUsers] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [authToken, setAuthToken] = useState(() => localStorage.getItem('authToken') || '');
@@ -20,7 +22,13 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
         }, {
           headers: { Authorization: `${authToken}` }
         });
-        setUsers(response.data.users);
+        if (response.data.users && response.data.users.length > 0) {
+          setUsers(response.data.users);
+        } else {
+          setUsers([]); // No users found, set to empty array
+        }
+        console.log(response.data.users);
+       
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -31,7 +39,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
 
   const handleFollow = async (username) => {
     try {
-      await axios.put(`http://127.0.0.1:8000/follow/${username}/`,{},{
+      await axios.put(`http://127.0.0.1:8000/follow/${username}/`, {}, {
         headers: { Authorization: `${authToken}` }
       });
       setUsers(prevUsers =>
@@ -46,7 +54,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
 
   const handleUnfollow = async (username) => {
     try {
-      await axios.put(`http://127.0.0.1:8000/unfollow/${username}/`,{},{
+      await axios.put(`http://127.0.0.1:8000/unfollow/${username}/`, {}, {
         headers: { Authorization: `${authToken}` }
       });
       setUsers(prevUsers =>
@@ -58,6 +66,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
       console.error('Error unfollowing user:', error);
     }
   };
+
   const handlereload =()=>
   {
     setTimeout(()=>{
@@ -65,17 +74,17 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
     },1);
   }
 
-  // const handleFollowToggle = (username, isFollowed) => {
-  //   if (isFollowed) {
-  //     handleUnfollow(username);
-  //   } else {
-  //     handleFollow(username);
-  //   }
-  // };
+  const handleFollowToggle = (username, isFollowed) => {
+    if (isFollowed) {
+      handleUnfollow(username);
+    } else {
+      handleFollow(username);
+    }
+  };
 
   const handleShowMoreLessToggle = () => {
     if (showAllUsers) {
-      setVisibleUsersCount(3); // Show only initial 3 users
+      setVisibleUsersCount(5); // Show only initial 3 users
     } else {
       setVisibleUsersCount(users.length); // Show all users
     }
@@ -86,7 +95,7 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
     setSearchQuery(e.target.value);
   };
 
-  const showShowMoreButton = users.length >= 4;
+  const showShowMoreButton = users.length >= 5;
 
   return (
     <>
@@ -118,54 +127,53 @@ const RightSidebar = ({ isVisible, toggleSidebar }) => {
           <div style={{ fontSize: '16px' }} className='mb-1 ms-2 '><b>You might know</b></div>
         </div>
 
-        
         <div className="user-list-container" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 120px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div className="user-list p-2">
-            {users.slice(0, visibleUsersCount).map((user) => (
-              <div
-                key={user.id}
-                className="user-item d-flex align-items-center mb-1 p-2"
-              >
-                <img
-                  src={user.img || 'https://via.placeholder.com/40'} 
-                  alt={user.name}
-                  className="rounded-circle me-3"
-                  style={{ width: '35px', height: '35px' }} 
-                />
-                <Link to={`/home/profile/${user.username}`} onClick={handlereload} className="user-info flex-grow-1">
-                  <p className="mb-0 text-dark" style={{ fontSize: '13px' }}>
-                    <b>{user.firstname} {user.lastname}</b>
-                  </p>
-                  <small className="text-muted" style={{ fontSize: '12px' }}>
-                    @{user.username}
-                  </small>
-                </Link>
-                {/* <button
-                  className={`btn btn-sm ${user.isFollowed ? 'btn-primary' : 'btn-outline-primary'}`}
-                  onClick={() => handleFollowToggle(user.username, user.isFollowed)}
-                >
-                  {user.isFollowed ? 'Unfollow' : 'Follow'}
-                </button> */}
-                {user.isFollowed ? (
-              <button className="btn btn-primary btn-sm ms-3" onClick={handleUnfollow()}>
-                Unfollow
-              </button>
+            {/* Check if there are users, otherwise show "No results found" */}
+            {users.length > 0 ? (
+              <>
+                {users.slice(0, visibleUsersCount).map((user) => (
+                  <div
+                    key={user.id}
+                    className="user-item d-flex align-items-center mb-1 p-2"
+                  >  
+                    <img
+                      src={user.image ? `http://127.0.0.1:8000/${user.image}` : img} 
+                      alt={user.name}
+                      className="rounded-circle me-3"
+                      style={{ width: '40px', height: '40px' }} 
+                    />
+                    <Link to={`/home/profile/${user.username}`} onClick={handlereload} className="user-info flex-grow-1">
+                      <p className="mb-0 text-dark" style={{ fontSize: '13px' }}>
+                        <b>{user.firstname} {user.lastname}</b>
+                      </p>
+                      <small className="text-muted" style={{ fontSize: '12px' }}>
+                        @{user.username}
+                      </small>
+                    </Link>
+                    <button
+                      className={`btn btn-sm ${user.isFollowed ? 'btn-primary' : 'btn-outline-primary'}`}
+                      onClick={() => handleFollowToggle(user.username, user.isFollowed)}
+                    >
+                      {user.isFollowed ? 'Unfollow' : 'Follow'}
+                    </button>
+                  </div>
+                ))}
+                {showShowMoreButton && (
+                  <div className="mt-1">
+                    <button
+                      className="btn btn-link link-hover"
+                      onClick={handleShowMoreLessToggle}
+                      style={{ fontSize: '14px' }}
+                    >
+                      {showAllUsers ? 'Show Less' : 'Show More'}
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
-              <button className="btn btn-outline-primary btn-sm ms-3" onClick={handleFollow()}>
-                Follow
-              </button>
-            )}
-              </div>
-            ))}
-            {showShowMoreButton && (
-              <div className="mt-1">
-                <button
-                  className="btn btn-link link-hover"
-                  onClick={handleShowMoreLessToggle}
-                  style={{ fontSize: "14px" }}
-                >
-                  {showAllUsers ? 'Show Less' : 'Show More'}
-                </button>
+              <div className="text-center mt-4">
+                <p>No results found</p>
               </div>
             )}
           </div>

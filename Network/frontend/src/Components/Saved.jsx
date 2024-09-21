@@ -72,7 +72,7 @@ const Saved = () => {
       updatedPosts[index].comments.push({
         username:response.data.user,
         text: commentText,
-        // profileImage:response.data.image
+        profileImage:response.data.image
         
       });
       setPosts(updatedPosts);

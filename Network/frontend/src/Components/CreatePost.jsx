@@ -17,12 +17,14 @@ const CreatePostModal = ({ showModal, handleCloseModal }) => {
 
   const handlePost = async () => {
     if (!selectedFile) {
-      alert('Please select an image to post.');
+      toast.error('Please select an image to post.'); // Use toast for error messaging
       return;
     }
     console.log(authToken)
     const formData = new FormData();
-    formData.append('image', selectedFile); // Append the file
+    if(selectedFile){
+      formData.append('image', selectedFile); 
+    }
     formData.append('text', caption); // Append the caption
 
     try {
@@ -35,6 +37,7 @@ const CreatePostModal = ({ showModal, handleCloseModal }) => {
 
       if (response.status === 201) {
         handleCloseModal(); 
+        setSelectedFile(null);
         toast.success("Posted Successfully Created")
       }
     } catch (error) {
@@ -54,11 +57,16 @@ const CreatePostModal = ({ showModal, handleCloseModal }) => {
     setSelectedFile(null);
   };
 
+  const handleClose=()=>{
+    setSelectedFile(null);
+    handleCloseModal()
+  }
+
   return (
     <Modal
       show={showModal}
       centered
-      onHide={handleCloseModal}
+      onHide={handleClose}
       size='md'
     >
       <Modal.Body>

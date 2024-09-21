@@ -72,6 +72,7 @@ const Post = () => {
       updatedPosts[index].comments.push({
         username: response.data.user,
         text: commentText,
+        profileImage:response.data.image
       });
       setPosts(updatedPosts);
       setCommentInputs({ ...commentInputs, [postId]: '' });

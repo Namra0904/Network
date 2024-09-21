@@ -17,14 +17,14 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
     });
     
 
-    // Update form values when profileData changes
+
     useEffect(() => {
         if (profileData) {
             setValue('username', profileData.username);
             setValue('firstName', profileData.firstName);
             setValue('lastName', profileData.lastName);
-            setValue('bio', profileData.bio);
-            setValue('dob',profileData.dob);
+            setValue('bio', profileData.bio|| "");
+            setValue('dob',profileData.dob || "");
             
         }
     }, [profileData, setValue]);
@@ -40,21 +40,22 @@ const EditProfile = ({ showEditModal, setShowEditModal, profileData }) => {
 
     const onSubmit = async (data) => {
         try {
-            // const formData = new FormData();
-            // formData.append('username', data.username);
-            // formData.append('firstname', data.firstName);
-            // formData.append('lastname', data.lastName);
-            // formData.append('bio', data.bio);
-            // formData.append('dob', data.dob);
-            // if (selectedFile) {
-            //     formData.append('image', selectedFile);
-            // }
+            console.log(data.lastName)
+            const formData = new FormData();
+            formData.append('username', data.username);
+            formData.append('firstname', data.firstName);
+            formData.append('lastname', data.lastName);
+            formData.append('bio', data.bio||'');
+            formData.append('dob', data.dob||'');
+            if (selectedFile) {
+                formData.append('image', selectedFile);
+            }
             // console.log(formData)
 
             data.image = selectedFile
             console.log(data)
             
-            const response = await axios.post('http://127.0.0.1:8000/user/update/', data, {
+            const response = await axios.post('http://127.0.0.1:8000/user/update/', formData, {
                 headers: {
                     Authorization: authToken,
                     'Content-Type': 'multipart/form-data',
